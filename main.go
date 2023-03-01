@@ -3,9 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
+	//"log"
 	"mosaic/config"
 	"mosaic/localMosaic"
 	"mosaic/logRuntime"
+	//"net/http"
+	"github.com/pkg/profile"
+	//_ "net/http/pprof"
+	//"github.com/google/pprof/profile"
 	"os"
 )
 
@@ -40,7 +45,8 @@ func main() {
 		printHelp()
 		os.Exit(0)
 	}
-
+	defer profile.Start().Stop()
+	//defer profile.Start(profile.CPUProfile).Stop()
 	//configTask(*chunkSize, *methodFlag)
 	chunk := *chunkSize
 	config.RegDecoders()

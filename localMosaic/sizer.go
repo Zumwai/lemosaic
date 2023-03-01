@@ -24,7 +24,7 @@ func resizeSrcImage(dirName, name string, size int) error {
 	}
 	defer resized.Close()
 
-	dst := image.NewRGBA(image.Rect(0, 0, size, size))
+	dst := image.NewNRGBA(image.Rect(0, 0, size, size))
 	err = imgConv.ApplyInterpol(src, dst, config.InterpolLookup())
 	if err != nil {
 		return err

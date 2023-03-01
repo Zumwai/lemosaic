@@ -3,12 +3,15 @@ package localMosaic
 import (
 	//"bytes"
 	"fmt"
+
 	"golang.org/x/image/tiff"
 	"golang.org/x/image/webp"
 	"image"
 	"image/gif"
 	"image/jpeg"
 	"image/png"
+	"mosaic/config"
+	"mosaic/imgConv"
 	"net/http"
 	"os"
 )
@@ -16,7 +19,7 @@ import (
 const seekStart = 0 // local const identical in it's meaning to io.SeekStart. Does no need package for this
 
 /* inspects file for type, checks for boundaries. Calls to  Convert by type and returns image/png. Returns error if file is too large or too unexpected*/
-func ConvertCorrectType(name string) (image.Image, error) {
+func ConvertCorrectType(name string) (*image.NRGBA, error) {
 	stat, err := os.Stat(name)
 	if err != nil {
 		return nil, err
@@ -45,18 +48,29 @@ func ConvertCorrectType(name string) (image.Image, error) {
 	}
 	format := http.DetectContentType(buff)
 	dst, err := decodeByType(format, file)
-	if format != "image/png" {
-		dst = leconvert(dst)
-	}
 	if err != nil {
 		return nil, err
 	}
-	return dst, nil
+
+	tmpPtr, err := imgConv.ResizeInMemory(dst, dst.Bounds().Max.X, dst.Bounds().Max.Y, config.InterpolLookup())
+	if err != nil {
+		return nil, err
+	}
+	//return imgConv.CopyIntoPNG(dst), nil
+	return tmpPtr, nil
+
+	/*
+		if format != "image/png" {
+		}
+	*/
+	//return dst.(*image.RGBA), nil
+	//return dst, nil
 }
 
 func decodeByType(format string, file *os.File) (dst image.Image, err error) {
 	switch format {
 	case "image/png":
+		//dec := png.
 		return png.Decode(file)
 	case "image/jpeg":
 		return jpeg.Decode(file)

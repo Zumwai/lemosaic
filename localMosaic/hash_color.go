@@ -2,6 +2,8 @@ package localMosaic
 
 import (
 	"fmt"
+	//"image"
+	"mosaic/config"
 	"mosaic/imgConv"
 	"os"
 	"sync"
@@ -44,4 +46,25 @@ func PopulateHashDir(dirName string, size int) (map[string]imgConv.ImgInfo, erro
 	}
 	wg.Wait()
 	return average.hash, nil
+}
+
+/* calcultes average colors of given file, resized it in memory if requested*/
+func CalcAverageColours(name string, size int) (pic imgConv.ImgInfo, err error) {
+	img, err := getDecodedFile(name)
+	if err != nil {
+		return
+	}
+	if size == 0 {
+		pic.Square = img
+	} else {
+		pic.Square, err = imgConv.ResizeInMemory(img, size, size, config.InterpolLookup())
+		if err != nil {
+			return pic, err
+		}
+	}
+	//tmpPtr := pic.Square.(*image.NRGBA)
+	//pic.Av = imgConv.GetAveragePixel(tmpPtr, tmpPtr.Rect)
+	pic.Av = imgConv.GetAveragePixel(pic.Square, 0, 0, pic.Square.Rect.Max.X, pic.Square.Rect.Max.Y)
+
+	return
 }

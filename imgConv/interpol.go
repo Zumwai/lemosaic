@@ -2,23 +2,26 @@ package imgConv
 
 import (
 	"errors"
+	//	"fmt"
 	"golang.org/x/image/draw"
 	"image"
+	// "mosaic/config"
 )
 
 type ImgInfo struct {
 	Av     Pixel
-	Square image.Image
+	Square *image.NRGBA
 }
 
 type Pixel struct {
-	R float64
-	G float64
-	B float64
-	A float64
+	R uint32
+	G uint32
+	B uint32
+	A uint32
 }
 
-func ApplyInterpol(src image.Image, dst *image.RGBA, interpolMethod string) error {
+/* copies image with resizing and required quality*/
+func ApplyInterpol(src image.Image, dst *image.NRGBA, interpolMethod string) error {
 	switch interpolMethod {
 	case "ApproxBiLinear":
 		draw.ApproxBiLinear.Scale(dst, dst.Rect, src, src.Bounds(), draw.Over, nil)

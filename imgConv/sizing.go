@@ -1,12 +1,13 @@
 package imgConv
 
 import (
+	//"fmt"
 	"image"
-	"math"
+	//"mosaic/imgConv"
 )
 
-func ResizeInMemory(src image.Image, sizeX, sizeY int, interpolMethod string) (image.Image, error) {
-	new := image.NewRGBA(image.Rect(0, 0, sizeX, sizeY))
+func ResizeInMemory(src image.Image, sizeX, sizeY int, interpolMethod string) (*image.NRGBA, error) {
+	new := image.NewNRGBA(image.Rect(0, 0, sizeX, sizeY))
 	err := ApplyInterpol(src, new, interpolMethod)
 	if err != nil {
 		return nil, err
@@ -15,49 +16,69 @@ func ResizeInMemory(src image.Image, sizeX, sizeY int, interpolMethod string) (i
 }
 
 /* calculates nearest integer(new < num) divisible by div */
-
 func CorrectImageSize(num, div int) int {
-	quotient := num / div
-	return div * quotient
+	var quotient int
+	quotient = int(num / div)
+	return int(div * quotient)
 }
 
-/* calcs average color of a square (x or y) + size in a given image. May be redone into int calc for speed*/
-func CalcAverageChunk(x, y, size int, img image.Image) (tuple Pixel) {
-	var frameX int = x + size
-	var frameY int = y + size
-	//tmp := img.(*image.YCbCr)
-	//start := uintptr(unsafe.Pointer(&tmp.Pix[0]))
-	tmp := img.(*image.RGBA)
-	//var tmp image.Image
-	/*	if _, ok := img.(*image.RGBA); ok {
-			tmp = img.(*image.RGBA)
-		} else if _, ok := img.(*image.YCbCr); ok {
-			tmp = leconvert(img)
-		}
-	*/
-	for dx := x; dx < frameX; dx++ {
-		for dy := y; dy < frameY; dy++ {
+func CalcAverageChunk(x, y, size int, img *image.NRGBA) Pixel {
+	var limitX int
+	var limitY int
 
-			offset := tmp.PixOffset(dx, y)
-			oops := tmp.Pix[offset : offset+8 : offset+16]
-			tuple.R += float64(oops[0])
-			tuple.G += float64(oops[1])
-			tuple.B += float64(oops[2])
+	if x+size > img.Rect.Max.X {
+		return Pixel{255, 255, 255, 255}
+		//limitX = img.Rect.Max.X
+	} else {
+		limitX = x + size
+	}
+	if y+size > img.Rect.Max.Y {
+		return Pixel{255, 255, 255, 255}
+		//limitY = img.Rect.Max.Y
+	} else {
+		limitY = y + size
+	}
+	return GetAveragePixel(img, x, y, limitX, limitY)
+}
+
+/*
+	func rgbaToPixel(r uint32, g uint32, b uint32, a uint32) Pixel {
+		return Pixel{r / 257, g / 257, b / 257, a / 257}
+	}
+*/
+func GetAveragePixel(pic *image.NRGBA, dx, dy, maxx, maxy int) (av Pixel) {
+	for x := dx; x < maxx; x++ {
+		//		srcPixOffset := pic.PixOffset(x, 0)
+		//  	dstPixOffset := dst.PixOffset(x, 0)
+		for y := dy; y < maxy; y++ {
+			offset := pic.PixOffset(x, y)
+			col := pic.Pix[offset : offset+4 : offset+4]
+			av.R += uint32(col[0])
+			av.G += uint32(col[1])
+			av.B += uint32(col[2])
 			/*
-				tuple.R += float64(*(*uint8)((unsafe.Pointer)(start + uintptr(dstPixOffset))))
-				tuple.G += float64(*(*uint8)((unsafe.Pointer)(start + uintptr(dstPixOffset+8))))
-				tuple.B += float64(*(*uint8)((unsafe.Pointer)(start + uintptr(dstPixOffset+16))))
+				offset = pic.PixOffset(x, y+1)
+				col = pic.Pix[offset : offset+4 : offset+4]
+				av.R += uint32(col[0])
+				av.G += uint32(col[1])
+				av.B += uint32(col[2])
+				offset = pic.PixOffset(x, y+2)
+				col = pic.Pix[offset : offset+4 : offset+4]
+				av.R += uint32(col[0])
+				av.G += uint32(col[1])
+				av.B += uint32(col[2])
+				offset = pic.PixOffset(x, y+3)
+				col = pic.Pix[offset : offset+4 : offset+4]
+				av.R += uint32(col[0])
+				av.G += uint32(col[1])
+				av.B += uint32(col[2])
 			*/
 		}
 	}
-	imgArea := float64(size * size)
-	tuple.R = math.Round(tuple.R / imgArea)
-	tuple.G = math.Round(tuple.G / imgArea)
-	tuple.B = math.Round(tuple.B / imgArea)
-	tuple.A = 255
-	return tuple
-}
-
-func RgbaToPixel(r uint32, g uint32, b uint32, a uint32) Pixel {
-	return Pixel{float64(r / 257), float64(g / 257), float64(b / 257), float64(a / 257)}
+	//fmt.Println(av)
+	imgArea := uint32((maxx - dx) * (maxy - dy))
+	//fmt.Println(imgArea)
+	av.R, av.G, av.B, av.A = av.R/imgArea, av.G/imgArea, av.B/imgArea, 255
+	//fmt.Println(av)
+	return av
 }
