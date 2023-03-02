@@ -3,13 +3,13 @@ package localMosaic
 import (
 	//"bytes"
 	"fmt"
-
 	"golang.org/x/image/tiff"
 	"golang.org/x/image/webp"
 	"image"
 	"image/gif"
 	"image/jpeg"
 	"image/png"
+	"io"
 	"mosaic/config"
 	"mosaic/imgConv"
 	"net/http"
@@ -47,7 +47,7 @@ func ConvertCorrectType(name string) (*image.NRGBA, error) {
 		return nil, err
 	}
 	format := http.DetectContentType(buff)
-	dst, err := decodeByType(format, file)
+	dst, err := DecodeByType(format, file)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func ConvertCorrectType(name string) (*image.NRGBA, error) {
 	//return dst, nil
 }
 
-func decodeByType(format string, file *os.File) (dst image.Image, err error) {
+func DecodeByType(format string, file io.Reader) (dst image.Image, err error) {
 	switch format {
 	case "image/png":
 		//dec := png.

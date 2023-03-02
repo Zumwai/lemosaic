@@ -26,6 +26,14 @@ func InterpolLookup() string {
 	return staticInterpolLookupTable(flag.Lookup("interpol").Value.(flag.Getter).Get().(int))
 }
 
+func ChunkLookup() int {
+	return flag.Lookup("chunk").Value.(flag.Getter).Get().(int)
+}
+
+func RoutineLookup() int {
+	return flag.Lookup("routine").Value.(flag.Getter).Get().(int)
+}
+
 func RegDecoders() {
 	image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
 	image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)

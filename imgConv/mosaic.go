@@ -76,7 +76,7 @@ func mosaicDatImg(src *image.NRGBA, dst *image.NRGBA, dx, limitX, limitY, size i
 }
 
 /* prepares mosaic image in memory */
-func PrepareMosaic(src image.Image, chunk, goCount int, source map[string]ImgInfo) *image.NRGBA {
+func PrepareMosaic(src *image.NRGBA, chunk, goCount int, source map[string]ImgInfo) *image.NRGBA {
 	var wg sync.WaitGroup
 	sizeX, sizeY, goCount := caclulateNewLimits(src.Bounds().Max.X, src.Bounds().Max.Y, chunk, goCount)
 
@@ -86,11 +86,10 @@ func PrepareMosaic(src image.Image, chunk, goCount int, source map[string]ImgInf
 	//fmt.Println(goCount)
 	wg.Add(goCount)
 	limitY := src.Bounds().Max.Y
-	tmpPtr := src.(*image.NRGBA)
 	for i := 0; i < goCount; i++ {
 		go func(i int) {
 			defer wg.Done()
-			mosaicDatImg(tmpPtr, dst, i*goStep, goStep, limitY, chunk, source)
+			mosaicDatImg(src, dst, i*goStep, goStep, limitY, chunk, source)
 		}(i)
 	}
 	wg.Wait()

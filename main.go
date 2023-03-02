@@ -11,6 +11,8 @@ import (
 	"github.com/pkg/profile"
 	//_ "net/http/pprof"
 	//"github.com/google/pprof/profile"
+	//"mosaic/serve"
+	"mosaic/serve"
 	"os"
 )
 
@@ -84,5 +86,6 @@ func main() {
 			fmt.Println(err)
 		}
 	}
+	serve.StartServer()
 	logRuntime.PrintMemory("at the end\n")
 }
