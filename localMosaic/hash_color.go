@@ -14,6 +14,7 @@ type AvColors struct {
 	hash map[string]imgConv.ImgInfo
 }
 
+/* method for concurrently add entity to map */
 func (m *AvColors) add(name string, hash imgConv.ImgInfo) {
 	m.mu.Lock()
 	defer m.mu.Unlock()

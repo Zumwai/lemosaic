@@ -8,11 +8,13 @@ import (
 	// "mosaic/config"
 )
 
+/* main struct to hold info about image */
 type ImgInfo struct {
 	Av     Pixel
 	Square *image.NRGBA
 }
 
+/* for calculating colors */
 type Pixel struct {
 	R uint32
 	G uint32

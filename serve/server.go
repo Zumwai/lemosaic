@@ -16,6 +16,7 @@ import (
 	//"strconv"
 )
 
+/*running server, duh */
 func StartServer() {
 	mux := http.NewServeMux()
 	files := http.FileServer(http.Dir("public"))
@@ -31,11 +32,13 @@ func StartServer() {
 	server.ListenAndServe()
 }
 
+/* loads html page with load image button */
 func upload(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("upload.html")
 	t.Execute(w, nil)
 }
 
+/*main html mosaic */
 func mosaic(w http.ResponseWriter, r *http.Request) {
 	t0 := time.Now()
 	r.ParseMultipartForm(1e+7)

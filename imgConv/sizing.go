@@ -6,6 +6,7 @@ import (
 	//"mosaic/imgConv"
 )
 
+/* resizes image in memory and returns it in PNG format */
 func ResizeInMemory(src image.Image, sizeX, sizeY int, interpolMethod string) (*image.NRGBA, error) {
 	new := image.NewNRGBA(image.Rect(0, 0, sizeX, sizeY))
 	err := ApplyInterpol(src, new, interpolMethod)
@@ -22,19 +23,19 @@ func CorrectImageSize(num, div int) int {
 	return int(div * quotient)
 }
 
+/* corrects limit size in case of overflow */
+
 func CalcAverageChunk(x, y, size int, img *image.NRGBA) Pixel {
 	var limitX int
 	var limitY int
 
 	if x+size > img.Rect.Max.X {
-		return Pixel{255, 255, 255, 255}
-		//limitX = img.Rect.Max.X
+		limitX = img.Rect.Max.X
 	} else {
 		limitX = x + size
 	}
 	if y+size > img.Rect.Max.Y {
-		return Pixel{255, 255, 255, 255}
-		//limitY = img.Rect.Max.Y
+		limitY = img.Rect.Max.Y
 	} else {
 		limitY = y + size
 	}
@@ -46,6 +47,9 @@ func CalcAverageChunk(x, y, size int, img *image.NRGBA) Pixel {
 		return Pixel{r / 257, g / 257, b / 257, a / 257}
 	}
 */
+
+/* calculates average color of a given chunk. Needs testing for разворачивание цикла*/
+
 func GetAveragePixel(pic *image.NRGBA, dx, dy, maxx, maxy int) (av Pixel) {
 	for x := dx; x < maxx; x++ {
 		//		srcPixOffset := pic.PixOffset(x, 0)

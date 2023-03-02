@@ -18,7 +18,7 @@ import (
 
 const seekStart = 0 // local const identical in it's meaning to io.SeekStart. Does no need package for this
 
-/* inspects file for type, checks for boundaries. Calls to  Convert by type and returns image/png. Returns error if file is too large or too unexpected*/
+/* inspects file for type, checks for boundaries. Calls to  Convert by type and returns *image.RGBA. Returns error if file is too large or too unexpected*/
 func ConvertCorrectType(name string) (*image.NRGBA, error) {
 	stat, err := os.Stat(name)
 	if err != nil {
@@ -67,6 +67,7 @@ func ConvertCorrectType(name string) (*image.NRGBA, error) {
 	//return dst, nil
 }
 
+/* calls corresponding decoder, depends on image format */
 func DecodeByType(format string, file io.Reader) (dst image.Image, err error) {
 	switch format {
 	case "image/png":

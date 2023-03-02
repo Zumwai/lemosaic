@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+/* decodes given image */
 func getDecodedFile(name string) (*image.NRGBA, error) {
 	/* file path checker needed? */
 	src, err := ConvertCorrectType(name)
@@ -16,6 +17,7 @@ func getDecodedFile(name string) (*image.NRGBA, error) {
 	return src, nil
 }
 
+/* encodes to local file */
 func encodeToFile(path, name, suffix string, dst *image.NRGBA) error {
 	newFile, err := os.Create(path + "/" + name + suffix)
 	if err != nil {

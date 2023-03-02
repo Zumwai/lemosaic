@@ -11,7 +11,7 @@ import (
 	"sync"
 )
 
-func GCD(a, b int) int {
+func gcd(a, b int) int {
 	for b != 0 {
 		t := b
 		b = a % b
@@ -20,13 +20,15 @@ func GCD(a, b int) int {
 	return a
 }
 
+/* corrects new image size and number of go routine used accotding to size of a picture and squares */
 func caclulateNewLimits(x, y, chunk, routine int) (nx, ny, ncount int) {
 	nx, ny = CorrectImageSize(x, chunk), CorrectImageSize(y, chunk)
 	tmp := nx / chunk
-	ncount = GCD(tmp, ncount)
+	ncount = gcd(tmp, ncount)
 	return nx, ny, ncount
 }
 
+/* pours chunk */
 func pourColorImg(src *image.NRGBA, dst *image.NRGBA, dx, limitX, limitY, size int) {
 	for x := dx; x < dx+limitX; x += size {
 		for y := 0; y < limitY; y += size {

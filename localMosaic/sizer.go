@@ -37,7 +37,7 @@ func resizeSrcImage(dirName, name string, size int) error {
 	return nil
 }
 
-/* changes size of the images in dir to desirable size. Format  x/y get twisted for now */
+/* changes size of the images in dir and squares them  to desirable size.. Puts in ./smaller dir. */
 func ChangeSrcsSize(targetDir string, size int) error {
 	var wg sync.WaitGroup
 

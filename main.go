@@ -25,6 +25,7 @@ func printHelp() {
 	-pour - square a circle
 	-populate -  populate hash from dirs of png
 	-mosaic - print target as a mosaic
+	folder used for source image file is ./pics/, not customizable
 	`)
 	os.Exit(1)
 }

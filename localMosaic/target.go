@@ -6,6 +6,8 @@ import (
 	"path"
 )
 
+/* main func to get poured image from local file, calculates and prints file into ./target/ */
+
 func ExecutePouring(name string, chunk int, goCount int) error {
 	src, err := getDecodedFile(name)
 	if err != nil {
@@ -19,6 +21,7 @@ func ExecutePouring(name string, chunk int, goCount int) error {
 	return nil
 }
 
+/* main func to get mosaic image from local file, calculates and prints file into ./target/ */
 func ExecuteMosaic(name string, chunk int, goCount int) error {
 	src, err := getDecodedFile(name)
 	if err != nil {
