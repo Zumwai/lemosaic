@@ -32,6 +32,7 @@ func printHelp() {
 
 func main() {
 	flag.Int("interpol", 0, "Choose one out of the for methods for interpolation")
+	flag.Int("format", 0, "choose internal format - NRGBA or RGBA")
 	var chunkSize = flag.Int("chunk", 20, "size of a square in image")
 	/*sets additional tasks for changing size and format of the images*/
 	var redoSmaller = flag.String("resize", "", "add this and foldder which you want to redo smallification")
@@ -40,6 +41,7 @@ func main() {
 	var populateHash = flag.String("populate", "", "populate db with hashes of images")
 	var mosaic = flag.String("mosaic", "", "mosaic dat image")
 	var routine = flag.Int("routine", 10, "number of gourutine in use")
+	var browser = flag.Bool("serve", false, "enable -serve flag in order ot start a server")
 	/*helper*/
 	var help = flag.Bool("help", false, "THERE IS NO HELP")
 	flag.Parse()
@@ -48,7 +50,7 @@ func main() {
 		printHelp()
 		os.Exit(0)
 	}
-	defer profile.Start().Stop()
+	p := profile.Start(profile.CPUProfile)
 	//defer profile.Start(profile.CPUProfile).Stop()
 	//configTask(*chunkSize, *methodFlag)
 	chunk := *chunkSize
@@ -87,6 +89,10 @@ func main() {
 			fmt.Println(err)
 		}
 	}
-	serve.StartServer()
+	if *browser {
+		serve.StartServer()
+	}
+
 	logRuntime.PrintMemory("at the end\n")
+	p.Stop()
 }

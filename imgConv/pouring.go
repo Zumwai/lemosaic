@@ -3,7 +3,7 @@ package imgConv
 import (
 	//	"fmt"
 	//"fmt"
-	"fmt"
+	//"fmt"
 	"image"
 	"image/color"
 	//"image/draw"
@@ -11,56 +11,29 @@ import (
 	"sync"
 )
 
-func gcd(a, b int) int {
-	for b != 0 {
-		t := b
-		b = a % b
-		a = t
-	}
-	return a
-}
-
-/* corrects new image size and number of go routine used accotding to size of a picture and squares */
-func caclulateNewLimits(x, y, chunk, routine int) (nx, ny, ncount int) {
-	nx, ny = CorrectImageSize(x, chunk), CorrectImageSize(y, chunk)
-	tmp := nx / chunk
-	ncount = gcd(tmp, ncount)
-	return nx, ny, ncount
-}
-
 /* pours chunk */
-func pourColorImg(src *image.NRGBA, dst *image.NRGBA, dx, limitX, limitY, size int) {
+func pourColorImg(src Image, dst Image, dx, limitX, limitY, size int) {
 	for x := dx; x < dx+limitX; x += size {
 		for y := 0; y < limitY; y += size {
 			col := CalcAverageChunk(x, y, size, src)
+			//	fmt.Println(col)
 			bounds := image.Rectangle{image.Point{x, y}, image.Point{x + size, y + size}}
 			av := color.RGBA{uint8(col.R), uint8(col.G), uint8(col.B), uint8(col.A)}
-			draw.Draw(dst, bounds, &image.Uniform{av}, image.Point{x, y}, draw.Src)
-			//			draw.DrawMask(dst, bounds, &image.Uniform{av}, image.Point{0, 0}, nil, image.Point{0, 0}, draw.Src)
-
+			//	fmt.Println(av)
+			draw.Draw(dst, bounds, &image.Uniform{av}, image.Point{0, 0}, draw.Src)
+			//	draw.DrawMask(dst, bounds, &image.Uniform{av}, image.Point{0, 0}, nil, image.Point{0, 0}, draw.Src)
 		}
 	}
 }
 
 /* pours colors in memory */
-func PreparePouring(src *image.NRGBA, chunk int, goCount int) *image.NRGBA {
+func PreparePouring(src Image, chunk int, goCount int) Image {
 	var wg sync.WaitGroup
-	X, Y, goCount := caclulateNewLimits(src.Bounds().Max.X, src.Bounds().Max.Y, chunk, goCount)
+	X, Y, goCount, goStep := caclulateNewLimits(src.Bounds().Max.X, src.Bounds().Max.Y, chunk, goCount)
 
-	fmt.Println(X)
-	goStep := X / goCount
-	fmt.Println(goStep, goCount)
-	//X = CorrectImageSize(X, goCount)
-	//fmt.Println(X)
-	//goStep = CorrectImageSize(goStep, goCount)
-	//X = CorrectImageSize(X, goStep)
-	dst := image.NewNRGBA(image.Rect(0, 0, X, Y))
-	//tmpPtr := src.(*image.NRGBA)
+	dst := GetEmptyPicture(X, Y)
 
-	//1365
-	//1353
 	wg.Add(goCount)
-	//fmt.Println(goCount, X, Y, goStep)
 	for i := 0; i < goCount; i++ {
 		go func(i int) {
 			defer wg.Done()

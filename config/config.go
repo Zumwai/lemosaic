@@ -26,6 +26,22 @@ func InterpolLookup() string {
 	return staticInterpolLookupTable(flag.Lookup("interpol").Value.(flag.Getter).Get().(int))
 }
 
+func staticFormatLookupTable(format int) string {
+	var formats = []string{
+		"NRGBA",
+		"RGBA",
+	}
+	if format < 0 || format > 1 {
+		fmt.Printf("there is only 4 types of interpolation available, choose %s, currently using default %s\n", formats, formats[0])
+		return formats[0]
+	}
+	return formats[format]
+}
+
+func FormatLookup() string {
+	return staticFormatLookupTable(flag.Lookup("format").Value.(flag.Getter).Get().(int))
+}
+
 func ChunkLookup() int {
 	return flag.Lookup("chunk").Value.(flag.Getter).Get().(int)
 }

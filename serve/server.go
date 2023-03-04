@@ -56,7 +56,7 @@ func mosaic(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	original, err := imgConv.ResizeInMemory(or, or.Bounds().Max.X, or.Bounds().Max.Y, config.InterpolLookup())
+	original, err := imgConv.ResizeInMemory(or, or.Bounds().Max.X, or.Bounds().Max.Y)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -81,10 +81,11 @@ func mosaic(w http.ResponseWriter, r *http.Request) {
 	mos := base64.StdEncoding.EncodeToString(buf.Bytes())
 	//fmt.Println(mos)
 	t1 := time.Now()
-	images := map[string]string{
-		"mosaic":   mos,
-		"duration": fmt.Sprintf("%v ", t1.Sub(t0)),
-	}
+	images := struct {
+		mosaic   string
+		duration string
+	}{mos, fmt.Sprintf("%v ", t1.Sub(t0))}
+
 	t, err := template.ParseFiles("result.html")
 	if err != nil {
 		fmt.Println(err)

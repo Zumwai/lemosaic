@@ -2,35 +2,25 @@ package localMosaic
 
 import (
 	"fmt"
-	"image"
-	"image/png"
-	"mosaic/config"
+	//"image"
 	"mosaic/imgConv"
 	"os"
-	"strings"
+
 	"sync"
 )
 
 /* need to do it in goroutine plus additional feature of resizing in place */
-
 func resizeSrcImage(dirName, name string, size int) error {
 	src, err := getDecodedFile(dirName + "/" + name)
 	if err != nil {
 		return err
 	}
-	resized, err := os.Create("./smaller/" + strings.TrimRight(name, ".png") + "_resized.png")
-	if err != nil {
-		return err
-	}
-	defer resized.Close()
-
-	dst := image.NewNRGBA(image.Rect(0, 0, size, size))
-	err = imgConv.ApplyInterpol(src, dst, config.InterpolLookup())
+	dst, err := imgConv.ResizeInMemory(src, size, size)
 	if err != nil {
 		return err
 	}
 
-	err = png.Encode(resized, dst)
+	err = encodeToFile("./smaller/", name, "_resized.png", dst)
 	if err != nil {
 		return err
 	}

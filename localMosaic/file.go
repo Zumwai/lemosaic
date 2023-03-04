@@ -1,24 +1,25 @@
 package localMosaic
 
 import (
-	"image"
+	//"image"
 	"image/png"
+	"mosaic/imgConv"
 	"os"
 )
 
 /* decodes given image */
-func getDecodedFile(name string) (*image.NRGBA, error) {
+func getDecodedFile(name string) (imgConv.Image, error) {
 	/* file path checker needed? */
-	src, err := ConvertCorrectType(name)
+	ret, err := ConvertCorrectType(name)
 
 	if err != nil {
-		return nil, err
+		return ret, err
 	}
-	return src, nil
+	return ret, nil
 }
 
 /* encodes to local file */
-func encodeToFile(path, name, suffix string, dst *image.NRGBA) error {
+func encodeToFile(path, name, suffix string, dst imgConv.Image) error {
 	newFile, err := os.Create(path + "/" + name + suffix)
 	if err != nil {
 		return err
@@ -28,6 +29,7 @@ func encodeToFile(path, name, suffix string, dst *image.NRGBA) error {
 		CompressionLevel: png.BestSpeed,
 	}
 	err = enc.Encode(newFile, dst)
+
 	if err != nil {
 		return err
 	}

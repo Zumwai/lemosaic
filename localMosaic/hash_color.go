@@ -3,7 +3,6 @@ package localMosaic
 import (
 	"fmt"
 	//"image"
-	"mosaic/config"
 	"mosaic/imgConv"
 	"os"
 	"sync"
@@ -32,7 +31,6 @@ func PopulateHashDir(dirName string, size int) (map[string]imgConv.ImgInfo, erro
 	}
 
 	average.hash = make(map[string]imgConv.ImgInfo, len(dirReader))
-	//average.hash = make(map[string]imgConv.ImgInfo)
 	wg.Add(len(dirReader))
 	for _, f := range dirReader {
 		go func(name string) {
@@ -58,14 +56,11 @@ func CalcAverageColours(name string, size int) (pic imgConv.ImgInfo, err error) 
 	if size == 0 {
 		pic.Square = img
 	} else {
-		pic.Square, err = imgConv.ResizeInMemory(img, size, size, config.InterpolLookup())
+		pic.Square, err = imgConv.ResizeInMemory(img, size, size)
 		if err != nil {
 			return pic, err
 		}
 	}
-	//tmpPtr := pic.Square.(*image.NRGBA)
-	//pic.Av = imgConv.GetAveragePixel(tmpPtr, tmpPtr.Rect)
-	pic.Av = imgConv.GetAveragePixel(pic.Square, 0, 0, pic.Square.Rect.Max.X, pic.Square.Rect.Max.Y)
-
+	pic.Av = imgConv.GetAveragePixel(pic.Square, 0, 0, pic.Square.Bounds().Max.X, pic.Square.Bounds().Max.Y)
 	return
 }

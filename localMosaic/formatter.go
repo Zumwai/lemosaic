@@ -10,7 +10,6 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
-	"mosaic/config"
 	"mosaic/imgConv"
 	"net/http"
 	"os"
@@ -19,7 +18,7 @@ import (
 const seekStart = 0 // local const identical in it's meaning to io.SeekStart. Does no need package for this
 
 /* inspects file for type, checks for boundaries. Calls to  Convert by type and returns *image.RGBA. Returns error if file is too large or too unexpected*/
-func ConvertCorrectType(name string) (*image.NRGBA, error) {
+func ConvertCorrectType(name string) (ret imgConv.Image, err error) {
 	stat, err := os.Stat(name)
 	if err != nil {
 		return nil, err
@@ -48,30 +47,22 @@ func ConvertCorrectType(name string) (*image.NRGBA, error) {
 	}
 	format := http.DetectContentType(buff)
 	dst, err := DecodeByType(format, file)
+
 	if err != nil {
 		return nil, err
 	}
 
-	tmpPtr, err := imgConv.ResizeInMemory(dst, dst.Bounds().Max.X, dst.Bounds().Max.Y, config.InterpolLookup())
+	tmpPtr, err := imgConv.ResizeInMemory(dst, dst.Bounds().Max.X, dst.Bounds().Max.Y)
 	if err != nil {
 		return nil, err
 	}
-	//return imgConv.CopyIntoPNG(dst), nil
 	return tmpPtr, nil
-
-	/*
-		if format != "image/png" {
-		}
-	*/
-	//return dst.(*image.RGBA), nil
-	//return dst, nil
 }
 
-/* calls corresponding decoder, depends on image format */
+/* calls corresponding decoder, depends on image format, returns image.Image with an undefined underlying actual type */
 func DecodeByType(format string, file io.Reader) (dst image.Image, err error) {
 	switch format {
 	case "image/png":
-		//dec := png.
 		return png.Decode(file)
 	case "image/jpeg":
 		return jpeg.Decode(file)
