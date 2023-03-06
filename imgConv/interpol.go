@@ -2,18 +2,20 @@ package imgConv
 
 import (
 	"errors"
+	//"fmt"
 	"golang.org/x/image/draw"
 	"image"
 	"image/color"
 	"mosaic/config"
 )
 
+/* similar to draw.Image. Declared for convinience */
 type Image interface {
 	image.Image
 	Set(x, y int, c color.Color)
 }
 
-/* main struct to hold info about image */
+/* main struct to hold info about images for mosaic */
 type ImgInfo struct {
 	Av     Pixel
 	Square Image
@@ -46,23 +48,18 @@ func ApplyInterpol(src image.Image, dst Image, newRect image.Rectangle) error {
 	return nil
 }
 
-type Union interface {
-	*image.RGBA | *image.NRGBA
-}
-
 func GetEmptyPicture(sizeX, sizeY int) Image {
 
-	ret := image.NewNRGBA(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
-	/*
-	   f	ormat := config.FormatLookup()
-	   	switch format {
-	   	case "NRGBA":
-	   		return image.NewNRGBA(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
-	   	case "RGBA":
-	   		return image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
-	   	default:
-	   		return image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
-	   	}
-	   	/*will never happen*/
-	return ret
+	//ret := image.NewNRGBA(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
+
+	format := config.FormatLookup()
+	//fmt.Println(format)
+	switch format {
+	case "NRGBA":
+		return image.NewNRGBA(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
+	case "RGBA":
+		return image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
+	default:
+		return image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
+	}
 }

@@ -28,7 +28,7 @@ func ExecuteMosaic(name string, chunk int, goCount int) error {
 		return err
 	}
 
-	source, err := PopulateHashDir("./pics/", chunk)
+	source, err := PopulateHashDir("./pics")
 	//logRuntime.PrintMemory("after populating hash\n")
 
 	if err != nil {

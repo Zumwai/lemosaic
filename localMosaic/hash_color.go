@@ -3,6 +3,9 @@ package localMosaic
 import (
 	"fmt"
 	//"image"
+	"golang.org/x/image/draw"
+
+	"mosaic/config"
 	"mosaic/imgConv"
 	"os"
 	"sync"
@@ -21,7 +24,7 @@ func (m *AvColors) add(name string, hash imgConv.ImgInfo) {
 }
 
 /* opens dir and puts all its files into map, containing name and average colors */
-func PopulateHashDir(dirName string, size int) (map[string]imgConv.ImgInfo, error) {
+func PopulateHashDir(dirName string) (map[string]imgConv.ImgInfo, error) {
 	var wg sync.WaitGroup
 	var average AvColors
 
@@ -35,7 +38,7 @@ func PopulateHashDir(dirName string, size int) (map[string]imgConv.ImgInfo, erro
 	for _, f := range dirReader {
 		go func(name string) {
 			defer wg.Done()
-			tmp, err := CalcAverageColours(dirName+"/"+name, size)
+			tmp, err := CalcAverageSrcColours(dirName + "/" + name)
 			if err != nil {
 				fmt.Println(name, ":\t", err)
 			} else {
@@ -48,18 +51,22 @@ func PopulateHashDir(dirName string, size int) (map[string]imgConv.ImgInfo, erro
 }
 
 /* calcultes average colors of given file, resized it in memory if requested*/
-func CalcAverageColours(name string, size int) (pic imgConv.ImgInfo, err error) {
-	img, err := getDecodedFile(name)
+func CalcAverageSrcColours(name string) (pic imgConv.ImgInfo, err error) {
+	//img, err := getDecodedFile(name)
+	img, err := getUnformattedImage(name)
 	if err != nil {
 		return
 	}
-	if size == 0 {
-		pic.Square = img
-	} else {
-		pic.Square, err = imgConv.ResizeInMemory(img, size, size)
-		if err != nil {
-			return pic, err
-		}
+	size := config.ChunkLookup()
+	checked, ok := img.(draw.Image)
+	if ok && (img.Bounds().Max.X == size && img.Bounds().Max.Y == size) {
+		pic.Square = checked
+		pic.Av = imgConv.GetAveragePixel(pic.Square, 0, 0, pic.Square.Bounds().Max.X, pic.Square.Bounds().Max.Y)
+		return
+	}
+	pic.Square, err = imgConv.ResizeInMemory(img, size, size)
+	if err != nil {
+		return pic, err
 	}
 	pic.Av = imgConv.GetAveragePixel(pic.Square, 0, 0, pic.Square.Bounds().Max.X, pic.Square.Bounds().Max.Y)
 	return

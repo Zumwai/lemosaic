@@ -6,9 +6,9 @@ import (
 	//"log"
 	"mosaic/config"
 	"mosaic/localMosaic"
-	"mosaic/logRuntime"
+	//"mosaic/logRuntime"
 	//"net/http"
-	"github.com/pkg/profile"
+	//"github.com/pkg/profile"
 	//_ "net/http/pprof"
 	//"github.com/google/pprof/profile"
 	//"mosaic/serve"
@@ -50,8 +50,8 @@ func main() {
 		printHelp()
 		os.Exit(0)
 	}
-	p := profile.Start(profile.CPUProfile)
-	//defer profile.Start(profile.CPUProfile).Stop()
+	//p := profile.Start(profile.CPUProfile)
+	//	defer profile.Start(profile.CPUProfile).Stop()
 	//configTask(*chunkSize, *methodFlag)
 	chunk := *chunkSize
 	config.RegDecoders()
@@ -68,7 +68,7 @@ func main() {
 		}
 	}
 	if *calcAverage != "" {
-		av, err := localMosaic.CalcAverageColours(*calcAverage, chunk)
+		av, err := localMosaic.CalcAverageSrcColours(*calcAverage)
 		if err != nil {
 			fmt.Println(err)
 		} else {
@@ -76,7 +76,7 @@ func main() {
 		}
 	}
 	if *populateHash != "" {
-		hash, err := localMosaic.PopulateHashDir(*populateHash, chunk)
+		hash, err := localMosaic.PopulateHashDir(*populateHash)
 		if err != nil {
 			fmt.Println(err)
 		} else {
@@ -93,6 +93,7 @@ func main() {
 		serve.StartServer()
 	}
 
-	logRuntime.PrintMemory("at the end\n")
-	p.Stop()
+	//	logRuntime.PrintMemory("at the end\n")
+	//
+	// p.Stop()
 }

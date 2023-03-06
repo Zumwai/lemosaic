@@ -65,7 +65,7 @@ func mosaic(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	hashed, err := localMosaic.PopulateHashDir("./pics/", config.ChunkLookup())
+	hashed, err := localMosaic.PopulateHashDir("./pics/")
 	if err != nil {
 		fmt.Println(err)
 		return
