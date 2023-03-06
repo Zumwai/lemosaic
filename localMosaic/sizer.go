@@ -9,7 +9,7 @@ import (
 	"sync"
 )
 
-/* resizes dir of images into ./smaller/ */
+/* need to do it in goroutine plus additional feature of resizing in place */
 func resizeSrcImage(dirName, name string, size int) error {
 	src, err := getDecodedFile(dirName + "/" + name)
 	if err != nil {

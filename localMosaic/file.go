@@ -11,6 +11,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
+	"mosaic/config"
 	"mosaic/imgConv"
 	"net/http"
 	"os"
@@ -18,7 +19,6 @@ import (
 
 /* decodes given image */
 func getDecodedFile(name string) (imgConv.Image, error) {
-	/* file path checker needed? */
 	tmp, err := getUnformattedImage(name)
 	if err != nil {
 		return nil, err
@@ -41,19 +41,30 @@ func convertToDrawable(src image.Image) imgConv.Image {
 
 /* encodes to local file */
 func encodeToFile(path, name, suffix string, dst imgConv.Image) error {
-	newFile, err := os.Create(path + "/" + name + suffix)
+	//format := config.FormatLookup()
+	format := config.EncoderLookup()
+	newFile, err := os.Create(path + "/" + name + suffix + "." + format)
+
 	if err != nil {
 		return err
 	}
 	defer newFile.Close()
-	enc := png.Encoder{
-		CompressionLevel: png.BestSpeed,
+
+	switch format {
+	case "png":
+		enc := png.Encoder{
+			CompressionLevel: png.BestSpeed,
+		}
+		return enc.Encode(newFile, dst)
+	case "jpeg":
+		return jpeg.Encode(newFile, dst, &jpeg.Options{Quality: 50})
+	case "gif":
+		return gif.Encode(newFile, dst, nil)
+	case "tiff":
+		return tiff.Encode(newFile, dst, &tiff.Options{Compression: tiff.Deflate, Predictor: false})
+	default:
+		return fmt.Errorf("unrecognized- %s", format)
 	}
-	err = enc.Encode(newFile, dst)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 /* inspects file for type, checks for boundaries. Returns error if file is too large, too unexpected or unavailable*/

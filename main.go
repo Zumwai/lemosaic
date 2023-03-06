@@ -33,6 +33,7 @@ func printHelp() {
 func main() {
 	flag.Int("interpol", 0, "Choose one out of the for methods for interpolation")
 	flag.Int("format", 0, "choose internal format - NRGBA or RGBA")
+	flag.Int("encoder", 0, "choose fin format image [0-3] - jpeg, png, tiff, gif")
 	var chunkSize = flag.Int("chunk", 20, "size of a square in image")
 	/*sets additional tasks for changing size and format of the images*/
 	var redoSmaller = flag.String("resize", "", "add this and foldder which you want to redo smallification")
