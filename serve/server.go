@@ -38,7 +38,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, nil)
 }
 
-/*main html mosaic */
+/*main html mosaic. Doesn't uses regular tools, so it's an ugly bastard*/
 func mosaic(w http.ResponseWriter, r *http.Request) {
 	t0 := time.Now()
 	r.ParseMultipartForm(1e+7)

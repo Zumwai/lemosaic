@@ -17,6 +17,12 @@ import (
 	"os"
 )
 
+/*
+1-100, 75 is a default, used to determine how to encode jpeg.
+Currenty no outside control for that, limits are checked in image/jpeg
+*/
+const jpegQuality = 50
+
 /* decodes given image */
 func getDecodedFile(name string) (imgConv.Image, error) {
 	tmp, err := getUnformattedImage(name)
@@ -57,13 +63,13 @@ func encodeToFile(path, name, suffix string, dst imgConv.Image) error {
 		}
 		return enc.Encode(newFile, dst)
 	case "jpeg":
-		return jpeg.Encode(newFile, dst, &jpeg.Options{Quality: 50})
+		return jpeg.Encode(newFile, dst, &jpeg.Options{Quality: jpegQuality})
 	case "gif":
 		return gif.Encode(newFile, dst, nil)
 	case "tiff":
 		return tiff.Encode(newFile, dst, &tiff.Options{Compression: tiff.Deflate, Predictor: false})
 	default:
-		return fmt.Errorf("unrecognized- %s", format)
+		return fmt.Errorf("unrecognized format - %s", format)
 	}
 }
 

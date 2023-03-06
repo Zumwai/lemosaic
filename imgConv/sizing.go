@@ -7,7 +7,11 @@ import (
 	// "mosaic/imgConv"
 )
 
-/* resizes image in memory and returns it in Picture format */
+/* default opacity to store */
+const opacity = 255
+
+/* resizes image in memory and returns it in Picture format
+ */
 func ResizeInMemory(src image.Image, sizeX, sizeY int) (Image, error) {
 	//new := image.NewRGBA(image.Rect(0, 0, sizeX, sizeY))
 	new := GetEmptyPicture(sizeX, sizeY)
@@ -25,7 +29,6 @@ func CorrectImageSize(num, div int) int {
 }
 
 /* corrects limit size in case of overflow */
-
 func CalcAverageChunk(x, y, size int, img Image) Pixel {
 	var limitX int
 	var limitY int
@@ -48,7 +51,6 @@ func rgbaToPixel(r uint32, g uint32, b uint32, a uint32) Pixel {
 }
 
 /* calculates average color of a given chunk. Needs testing for разворачивание цикла*/
-
 func GetAveragePixel(pic Image, dx, dy, maxx, maxy int) (av Pixel) {
 	for x := dx; x < maxx; x++ {
 		//		srcPixOffset := pic.PixOffset(x, 0)
@@ -89,7 +91,7 @@ func GetAveragePixel(pic Image, dx, dy, maxx, maxy int) (av Pixel) {
 	//fmt.Println(av)
 	imgArea := uint32((maxx - dx) * (maxy - dy))
 	//fmt.Println(imgArea)
-	av.R, av.G, av.B, av.A = av.R/imgArea, av.G/imgArea, av.B/imgArea, 255
+	av.R, av.G, av.B, av.A = av.R/imgArea, av.G/imgArea, av.B/imgArea, opacity
 	//fmt.Println(av)
 	return av
 }
@@ -104,10 +106,10 @@ func gcd(a, b int) int {
 }
 
 /* corrects new image size and number of go routine used accotding to size of a picture and squares */
-func caclulateNewLimits(x, y, chunk, routine int) (nx, ny, ncount, goStep int) {
-	nx, ny = CorrectImageSize(x, chunk), CorrectImageSize(y, chunk)
-	tmp := nx / chunk
-	ncount = gcd(tmp, ncount)
-	goStep = nx / ncount
-	return nx, ny, ncount, goStep
+func caclulateNewLimits(x, y, chunk, routine int) (newX, newY, newCount, goStep int) {
+	newX, newY = CorrectImageSize(x, chunk), CorrectImageSize(y, chunk)
+	tmp := newX / chunk
+	newCount = gcd(tmp, newCount)
+	goStep = newX / newCount
+	return newX, newY, newCount, goStep
 }

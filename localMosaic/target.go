@@ -1,6 +1,7 @@
 package localMosaic
 
 import (
+	"mosaic/config"
 	"mosaic/imgConv"
 	//"mosaic/logRuntime"
 	"path"
@@ -8,12 +9,12 @@ import (
 
 /* main func to get poured image from local file, calculates and prints file into ./target/ */
 
-func ExecutePouring(name string, chunk int, goCount int) error {
+func ExecutePouring(name string) error {
 	src, err := getDecodedFile(name)
 	if err != nil {
 		return err
 	}
-	dst := imgConv.PreparePouring(src, chunk, goCount)
+	dst := imgConv.PreparePouring(src)
 	err = encodeToFile("./target/", path.Base(name), "_squared", dst)
 	if err != nil {
 		return err
@@ -22,7 +23,7 @@ func ExecutePouring(name string, chunk int, goCount int) error {
 }
 
 /* main func to get mosaic image from local file, calculates and prints file into ./target/ */
-func ExecuteMosaic(name string, chunk int, goCount int) error {
+func ExecuteMosaic(name string) error {
 	src, err := getDecodedFile(name)
 	if err != nil {
 		return err
@@ -30,11 +31,12 @@ func ExecuteMosaic(name string, chunk int, goCount int) error {
 
 	source, err := PopulateHashDir("./pics")
 	//logRuntime.PrintMemory("after populating hash\n")
-
+	size := config.ChunkLookup()
+	goCount := config.RoutineLookup()
 	if err != nil {
 		return err
 	}
-	dst := imgConv.PrepareMosaic(src, chunk, goCount, source)
+	dst := imgConv.PrepareMosaic(src, size, goCount, source)
 	//logRuntime.PrintMemory("after mosaic\n")
 
 	err = encodeToFile("./target/", path.Base(name), "_mosaic", dst)

@@ -6,9 +6,12 @@ import (
 	//"fmt"
 	"image"
 	"image/color"
+	"mosaic/config"
+
 	//"image/draw"
-	"golang.org/x/image/draw"
 	"sync"
+
+	"golang.org/x/image/draw"
 )
 
 /* pours chunk */
@@ -27,9 +30,11 @@ func pourColorImg(src Image, dst Image, dx, limitX, limitY, size int) {
 }
 
 /* pours colors in memory */
-func PreparePouring(src Image, chunk int, goCount int) Image {
+func PreparePouring(src Image) Image {
 	var wg sync.WaitGroup
-	X, Y, goCount, goStep := caclulateNewLimits(src.Bounds().Max.X, src.Bounds().Max.Y, chunk, goCount)
+	size := config.ChunkLookup()
+	goCount := config.RoutineLookup()
+	X, Y, goCount, goStep := caclulateNewLimits(src.Bounds().Max.X, src.Bounds().Max.Y, size, goCount)
 
 	dst := GetEmptyPicture(X, Y)
 
@@ -37,8 +42,7 @@ func PreparePouring(src Image, chunk int, goCount int) Image {
 	for i := 0; i < goCount; i++ {
 		go func(i int) {
 			defer wg.Done()
-			//fmt.Println("dx", i*goStep, "limitX", goStep, "true limit", i*goStep+goStep, "size", chunk, "i am", i, "routine!")
-			pourColorImg(src, dst, i*goStep, goStep, Y, chunk)
+			pourColorImg(src, dst, i*goStep, goStep, Y, size)
 		}(i)
 	}
 	wg.Wait()

@@ -3,6 +3,7 @@ package localMosaic
 import (
 	"fmt"
 	//"image"
+	"mosaic/config"
 	"mosaic/imgConv"
 	"os"
 
@@ -28,9 +29,9 @@ func resizeSrcImage(dirName, name string, size int) error {
 }
 
 /* changes size of the images in dir and squares them  to desirable size.. Puts in ./smaller dir. */
-func ChangeSrcsSize(targetDir string, size int) error {
+func ChangeSrcsSize(targetDir string) error {
 	var wg sync.WaitGroup
-
+	size := config.ChunkLookup()
 	dirSrc, err := os.ReadDir(targetDir)
 	if err != nil {
 		return err
