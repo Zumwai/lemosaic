@@ -29,8 +29,8 @@ func InterpolLookup() string {
 
 func staticFormatLookupTable(format int) string {
 	var formats = []string{
-		"NRGBA",
 		"RGBA",
+		"NRGBA",
 	}
 	if format < 0 || format > len(formats)-1 {
 		fmt.Printf("there is only %d types of interpolation available, choose %s, currently using default %s\n",

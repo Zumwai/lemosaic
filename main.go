@@ -6,7 +6,7 @@ import (
 	//"log"
 	"mosaic/config"
 	"mosaic/localMosaic"
-	//"mosaic/logRuntime"
+	"mosaic/logRuntime"
 	//"net/http"
 	//"github.com/pkg/profile"
 	//_ "net/http/pprof"
@@ -94,7 +94,7 @@ func main() {
 		serve.StartServer()
 	}
 
-	//	logRuntime.PrintMemory("at the end\n")
+	logRuntime.PrintMemory("at the end\n")
 	//
 	// p.Stop()
 }

@@ -14,7 +14,7 @@ func ExecutePouring(name string, chunk int, goCount int) error {
 		return err
 	}
 	dst := imgConv.PreparePouring(src, chunk, goCount)
-	err = encodeToFile("./target/", path.Base(name), "_squared.png", dst)
+	err = encodeToFile("./target/", path.Base(name), "_squared", dst)
 	if err != nil {
 		return err
 	}
@@ -37,7 +37,7 @@ func ExecuteMosaic(name string, chunk int, goCount int) error {
 	dst := imgConv.PrepareMosaic(src, chunk, goCount, source)
 	//logRuntime.PrintMemory("after mosaic\n")
 
-	err = encodeToFile("./target/", path.Base(name), "_mosaic.png", dst)
+	err = encodeToFile("./target/", path.Base(name), "_mosaic", dst)
 	if err != nil {
 		return err
 	}

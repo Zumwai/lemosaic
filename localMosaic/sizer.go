@@ -20,7 +20,7 @@ func resizeSrcImage(dirName, name string, size int) error {
 		return err
 	}
 
-	err = encodeToFile("./smaller/", name, "_resized.png", dst)
+	err = encodeToFile("./smaller/", name, "_resized", dst)
 	if err != nil {
 		return err
 	}
