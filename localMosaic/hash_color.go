@@ -64,6 +64,7 @@ func CalcAverageSrcColours(name string) (pic imgConv.ImgInfo, err error) {
 		pic.Av = imgConv.GetAveragePixel(pic.Square, 0, 0, pic.Square.Bounds().Max.X, pic.Square.Bounds().Max.Y)
 		return
 	}
+
 	pic.Square, err = imgConv.ResizeInMemory(img, size, size)
 	if err != nil {
 		return pic, err

@@ -1,7 +1,6 @@
 package localMosaic
 
 import (
-	//"image"
 	"fmt"
 	"golang.org/x/image/draw"
 	"golang.org/x/image/tiff"
@@ -60,6 +59,7 @@ func encodeToFile(path, name, suffix string, dst imgConv.Image) error {
 	case "png":
 		enc := png.Encoder{
 			CompressionLevel: png.BestSpeed,
+			//BufferPool:       pool,
 		}
 		return enc.Encode(newFile, dst)
 	case "jpeg":

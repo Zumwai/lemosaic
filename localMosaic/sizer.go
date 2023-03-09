@@ -28,7 +28,7 @@ func resizeSrcImage(dirName, name string, size int) error {
 	return nil
 }
 
-/* changes size of the images in dir and squares them  to desirable size.. Puts in ./smaller dir. */
+/* changes size of the images in dir and squares them  to desirable size. Puts in ./smaller/ dir. */
 func ChangeSrcsSize(targetDir string) error {
 	var wg sync.WaitGroup
 	size := config.ChunkLookup()

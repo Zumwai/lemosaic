@@ -6,8 +6,6 @@ import (
 	//"fmt"
 	"image"
 	"image/color"
-	"mosaic/config"
-
 	//"image/draw"
 	"sync"
 
@@ -32,17 +30,16 @@ func pourColorImg(src Image, dst Image, dx, limitX, limitY, size int) {
 /* pours colors in memory */
 func PreparePouring(src Image) Image {
 	var wg sync.WaitGroup
-	size := config.ChunkLookup()
-	goCount := config.RoutineLookup()
-	X, Y, goCount, goStep := caclulateNewLimits(src.Bounds().Max.X, src.Bounds().Max.Y, size, goCount)
+	var fr Frame
+	fr = caclulateNewLimits(src.Bounds().Max.X, src.Bounds().Max.Y)
 
-	dst := GetEmptyPicture(X, Y)
+	dst := GetEmptyPicture(fr.X, fr.Y)
 
-	wg.Add(goCount)
-	for i := 0; i < goCount; i++ {
+	wg.Add(fr.Routine)
+	for i := 0; i < fr.Routine; i++ {
 		go func(i int) {
 			defer wg.Done()
-			pourColorImg(src, dst, i*goStep, goStep, Y, size)
+			pourColorImg(src, dst, i*fr.Step, fr.Step, fr.Y, fr.Size)
 		}(i)
 	}
 	wg.Wait()

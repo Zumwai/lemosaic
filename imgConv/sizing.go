@@ -5,10 +5,20 @@ import (
 	//
 	"image"
 	// "mosaic/imgConv"
+	"fmt"
+	"mosaic/config"
 )
 
 /* default opacity to store */
 const opacity = 255
+
+type Frame struct {
+	X       int
+	Y       int
+	Routine int
+	Step    int
+	Size    int
+}
 
 /* resizes image in memory and returns it in Picture format
  */
@@ -106,10 +116,17 @@ func gcd(a, b int) int {
 }
 
 /* corrects new image size and number of go routine used accotding to size of a picture and squares */
-func caclulateNewLimits(x, y, chunk, routine int) (newX, newY, newCount, goStep int) {
-	newX, newY = CorrectImageSize(x, chunk), CorrectImageSize(y, chunk)
-	tmp := newX / chunk
-	newCount = gcd(tmp, newCount)
-	goStep = newX / newCount
-	return newX, newY, newCount, goStep
+func caclulateNewLimits(x, y int) Frame {
+	var fr Frame
+	tmpRout := config.RoutineLookup()
+	fr.Size = config.ChunkLookup()
+
+	fr.X, fr.Y = CorrectImageSize(x, fr.Size), CorrectImageSize(y, fr.Size)
+
+	tmp := fr.X / fr.Size
+	fr.Routine = gcd(tmp, tmpRout)
+
+	fr.Step = fr.X / fr.Routine
+	fmt.Printf("%+v\n", fr)
+	return fr
 }

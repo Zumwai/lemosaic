@@ -1,14 +1,12 @@
 package localMosaic
 
 import (
-	"mosaic/config"
 	"mosaic/imgConv"
 	//"mosaic/logRuntime"
 	"path"
 )
 
 /* main func to get poured image from local file, calculates and prints file into ./target/ */
-
 func ExecutePouring(name string) error {
 	src, err := getDecodedFile(name)
 	if err != nil {
@@ -31,12 +29,10 @@ func ExecuteMosaic(name string) error {
 
 	source, err := PopulateHashDir("./pics")
 	//logRuntime.PrintMemory("after populating hash\n")
-	size := config.ChunkLookup()
-	goCount := config.RoutineLookup()
 	if err != nil {
 		return err
 	}
-	dst := imgConv.PrepareMosaic(src, size, goCount, source)
+	dst := imgConv.PrepareMosaic(src, source)
 	//logRuntime.PrintMemory("after mosaic\n")
 
 	err = encodeToFile("./target/", path.Base(name), "_mosaic", dst)

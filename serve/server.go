@@ -8,7 +8,6 @@ import (
 	//"image"
 	//"mime/multipart"
 	"image/png"
-	"mosaic/config"
 	"mosaic/imgConv"
 	"mosaic/localMosaic"
 	"net/http"
@@ -70,7 +69,7 @@ func mosaic(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	final := imgConv.PrepareMosaic(original, config.ChunkLookup(), config.RoutineLookup(), hashed)
+	final := imgConv.PrepareMosaic(original, hashed)
 
 	buf := new(bytes.Buffer)
 	err = png.Encode(buf, final)
