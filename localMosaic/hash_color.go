@@ -50,9 +50,8 @@ func PopulateHashDir(dirName string) (map[string]imgConv.ImgInfo, error) {
 	return average.hash, nil
 }
 
-/* calcultes average colors of given file, resized it in memory if requested*/
+/* resizes image in memory if needed, then calcultes average colors */
 func CalcAverageSrcColours(name string) (pic imgConv.ImgInfo, err error) {
-	//img, err := getDecodedFile(name)
 	img, err := getUnformattedImage(name)
 	if err != nil {
 		return

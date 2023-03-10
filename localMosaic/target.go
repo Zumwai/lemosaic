@@ -13,7 +13,7 @@ func ExecutePouring(name string) error {
 		return err
 	}
 	dst := imgConv.PreparePouring(src)
-	err = encodeToFile("./target/", path.Base(name), "_squared", dst)
+	err = EncodeToFile("./target/", path.Base(name), "_squared", dst)
 	if err != nil {
 		return err
 	}
@@ -35,7 +35,7 @@ func ExecuteMosaic(name string) error {
 	dst := imgConv.PrepareMosaic(src, source)
 	//logRuntime.PrintMemory("after mosaic\n")
 
-	err = encodeToFile("./target/", path.Base(name), "_mosaic", dst)
+	err = EncodeToFile("./target/", path.Base(name), "_mosaic", dst)
 	if err != nil {
 		return err
 	}

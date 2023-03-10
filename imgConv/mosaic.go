@@ -28,6 +28,7 @@ func wikiSqrt(n uint32) uint32 {
 	return c
 }
 
+/* calculates euclid distance bewtween two 3-tuple of uint32 type */
 func leEuclidCoordinates(target, src Pixel) uint32 {
 	return wikiSqrt((target.R-src.R)*(target.R-src.R) +
 		(target.G-src.G)*(target.G-src.G) +
@@ -39,6 +40,7 @@ func euclidCoordinates(target Pixel, src Pixel) float64 {
 	return math.Sqrt(math.Pow(float64(target.R-src.R), 2) + math.Pow(float64(target.G-src.G), 2) + math.Pow(float64(target.B-src.B), 2))
 }
 */
+
 /* iterates over map of available squares and returns nearest image  */
 func calculateNearestPic(col Pixel, source map[string]ImgInfo) Image {
 	var min uint32 = 90000
@@ -46,16 +48,17 @@ func calculateNearestPic(col Pixel, source map[string]ImgInfo) Image {
 
 	for _, f := range source {
 		tmp := leEuclidCoordinates(col, f.Av)
-		//	fmt.Println(tmp)
 		if min > tmp {
 			min, new = tmp, f.Square
 		}
 	}
-	//	fmt.Println(namepls)
 	return new
 }
 
-/* steps over x by the amount of size*goroutine and iterates from top to bottom of y, converts average chunk size of original image to av color and  substitutes it with nearest available image-square */
+/*
+steps over x by the amount of (size of a square)*(number of goroutine) and  iterates from top to bottom of y,
+converts average chunk size of original image to av color and substitutes it with nearest available image-square
+*/
 func mosaicDatImg(src Image, dst Image, dx, limitX, limitY, size int, source map[string]ImgInfo) {
 	for x := dx; x < dx+limitX; x += size {
 		for y := 0; y < limitY; y += size {

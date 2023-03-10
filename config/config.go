@@ -74,3 +74,11 @@ func RegDecoders() {
 	image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
 	image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)
 }
+
+func NormalizeLookup() bool {
+	return flag.Lookup("normal").Value.(flag.Getter).Get().(bool)
+}
+
+func BounaryLookup() bool {
+	return flag.Lookup("bounds").Value.(flag.Getter).Get().(bool)
+}

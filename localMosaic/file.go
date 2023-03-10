@@ -2,7 +2,6 @@ package localMosaic
 
 import (
 	"fmt"
-	"golang.org/x/image/draw"
 	"golang.org/x/image/tiff"
 	"golang.org/x/image/webp"
 	"image"
@@ -28,25 +27,12 @@ func getDecodedFile(name string) (imgConv.Image, error) {
 	if err != nil {
 		return nil, err
 	}
-	ret := convertToDrawable(tmp)
+	ret := imgConv.ConvertToDrawable(tmp)
 	return ret, nil
 }
 
-func convertToDrawable(src image.Image) imgConv.Image {
-	ret, ok := src.(draw.Image)
-	if !ok {
-		tmpPtr, err := imgConv.ResizeInMemory(src, src.Bounds().Max.X, src.Bounds().Max.Y)
-		if err != nil {
-			return nil
-		}
-		return tmpPtr
-	}
-	return ret
-}
-
-/* encodes to local file */
-func encodeToFile(path, name, suffix string, dst imgConv.Image) error {
-	//format := config.FormatLookup()
+/* encodes to local file, type of resulting image depends on config */
+func EncodeToFile(path, name, suffix string, dst imgConv.Image) error {
 	format := config.EncoderLookup()
 	newFile, err := os.Create(path + "/" + name + suffix + "." + format)
 
@@ -73,7 +59,7 @@ func encodeToFile(path, name, suffix string, dst imgConv.Image) error {
 	}
 }
 
-/* inspects file for type, checks for boundaries. Returns error if file is too large, too unexpected or unavailable*/
+/* opens given filename and inspects file for type. Returns error if file is too large, too unexpected or unavailable or if something went wrong*/
 func getUnformattedImage(name string) (image.Image, error) {
 	stat, err := os.Stat(name)
 	if err != nil {
@@ -83,28 +69,12 @@ func getUnformattedImage(name string) (image.Image, error) {
 	if size > 1e+7 {
 		return nil, fmt.Errorf("file is too large %d, max size is 10 mb", size)
 	}
-
 	file, err := os.Open(name)
 	if err != nil {
 		return nil, err
 	}
-
 	defer file.Close()
-
-	buff := make([]byte, 512)
-	_, err = file.Read(buff)
-	if err != nil {
-		return nil, err
-	}
-
-	// resets reader pointer for decoder
-	_, err = file.Seek(0, io.SeekStart)
-	if err != nil {
-		return nil, err
-	}
-	format := http.DetectContentType(buff)
-	dst, err := DecodeByType(format, file)
-
+	dst, err := DecodeByType(file)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +82,17 @@ func getUnformattedImage(name string) (image.Image, error) {
 }
 
 /* calls corresponding decoder, depends on image format, returns image.Image with an undefined underlying actual type */
-func DecodeByType(format string, file io.Reader) (dst image.Image, err error) {
+func DecodeByType(file io.ReadSeeker) (dst image.Image, err error) {
+	buff := make([]byte, 512)
+	_, err = file.Read(buff)
+	if err != nil {
+		return nil, err
+	}
+	_, err = file.Seek(0, io.SeekStart)
+	if err != nil {
+		return nil, err
+	}
+	format := http.DetectContentType(buff)
 	switch format {
 	case "image/png":
 		return png.Decode(file)

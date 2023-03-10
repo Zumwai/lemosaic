@@ -47,29 +47,24 @@ func mosaic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer file.Close()
-	//var te multipart.File
-	//tileSize, _ := strconv.Atoi(r.FormValue("tile_size"))
-	//original, _, _ := image.Decode(file)
-	or, err := localMosaic.DecodeByType("image/png", file)
+
+	unformatted, err := localMosaic.DecodeByType(file)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	original, err := imgConv.ResizeInMemory(or, or.Bounds().Max.X, or.Bounds().Max.Y)
+	src := imgConv.ConvertToDrawable(unformatted)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+
 	hashed, err := localMosaic.PopulateHashDir("./pics/")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	final := imgConv.PrepareMosaic(original, hashed)
+	final := imgConv.PrepareMosaic(src, hashed)
 
 	buf := new(bytes.Buffer)
 	err = png.Encode(buf, final)
@@ -77,18 +72,26 @@ func mosaic(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
+
 	mos := base64.StdEncoding.EncodeToString(buf.Bytes())
 	//fmt.Println(mos)
 	t1 := time.Now()
 	images := struct {
-		mosaic   string
-		duration string
+		Mosaic   string
+		Duration string
 	}{mos, fmt.Sprintf("%v ", t1.Sub(t0))}
-
+	err = localMosaic.EncodeToFile("./target/", "tested server", "_squared", final)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	t, err := template.ParseFiles("result.html")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	t.Execute(w, images)
+	err = t.Execute(w, images)
+	if err != nil {
+		fmt.Println(err)
+	}
 }

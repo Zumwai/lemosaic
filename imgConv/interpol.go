@@ -21,7 +21,7 @@ type ImgInfo struct {
 	Square Image
 }
 
-/* for calculating colors */
+/*uint32 values used to calculate average colors */
 type Pixel struct {
 	R uint32
 	G uint32
@@ -29,7 +29,7 @@ type Pixel struct {
 	A uint32
 }
 
-/* copies image with resizing and required quality*/
+/* copies image, depends on required size and quality*/
 func ApplyInterpol(src image.Image, dst Image, newRect image.Rectangle) error {
 	interpolMethod := config.InterpolLookup()
 
@@ -48,12 +48,9 @@ func ApplyInterpol(src image.Image, dst Image, newRect image.Rectangle) error {
 	return nil
 }
 
+/* returns empy Image interface with drawable image inside, type depends on config */
 func GetEmptyPicture(sizeX, sizeY int) Image {
-
-	//ret := image.NewNRGBA(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
-
 	format := config.FormatLookup()
-	//fmt.Println(format)
 	switch format {
 	case "NRGBA":
 		return image.NewNRGBA(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
@@ -62,4 +59,16 @@ func GetEmptyPicture(sizeX, sizeY int) Image {
 	default:
 		return image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
 	}
+}
+
+func ConvertToDrawable(src image.Image) Image {
+	ret, ok := src.(draw.Image)
+	if !ok {
+		tmpPtr, err := ResizeInMemory(src, src.Bounds().Max.X, src.Bounds().Max.Y)
+		if err != nil {
+			return nil
+		}
+		return tmpPtr
+	}
+	return ret
 }

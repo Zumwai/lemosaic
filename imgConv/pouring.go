@@ -30,8 +30,7 @@ func pourColorImg(src Image, dst Image, dx, limitX, limitY, size int) {
 /* pours colors in memory */
 func PreparePouring(src Image) Image {
 	var wg sync.WaitGroup
-	var fr Frame
-	fr = caclulateNewLimits(src.Bounds().Max.X, src.Bounds().Max.Y)
+	fr := caclulateNewLimits(src.Bounds().Max.X, src.Bounds().Max.Y)
 
 	dst := GetEmptyPicture(fr.X, fr.Y)
 
@@ -45,9 +44,3 @@ func PreparePouring(src Image) Image {
 	wg.Wait()
 	return dst
 }
-
-/*
-fmt.Println(goStep, i*goStep, Y, goCount, "i am", i, " routine!")
-0 routine - has dx as 0, limitx with goStep 945
-1 routine - has dx as  945, dx as 945,
-*/
