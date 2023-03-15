@@ -21,4 +21,4 @@ Default img size limit is ~10mb. Use [-unmax] to unset internal limit and rely o
 
 As it's just silly little project, default behavior is local mosaic - accepts an image [-mosaic|-pour] [target] and outputs it in ./target/ dir. With [-serve] flag it will instead run on localhost:8080. HTML in use is from Chang S. - Go-Web-Programming.
 
-<img src="https://i.imgur.com/CNDJscB.png" width="250">
+<img src="https://i.imgur.com/CNDJscB.png" width="750">
