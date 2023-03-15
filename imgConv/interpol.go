@@ -2,7 +2,6 @@ package imgConv
 
 import (
 	"errors"
-	//"fmt"
 	"golang.org/x/image/draw"
 	"image"
 	"image/color"

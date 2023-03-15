@@ -13,7 +13,7 @@ func pourColorImg(src Image, dst Image, dx, limitX, limitY, size int) {
 		for y := 0; y < limitY; y += size {
 			col := CalcAverageChunk(x, y, size, src)
 			bounds := image.Rectangle{image.Point{x, y}, image.Point{x + size, y + size}}
-			av := color.RGBA{uint8(col.R), uint8(col.G), uint8(col.B), uint8(col.A)}
+			av := color.RGBA{uint8(col.R), uint8(col.G), uint8(col.B), 255}
 			draw.Draw(dst, bounds, &image.Uniform{av}, image.Point{0, 0}, draw.Src)
 		}
 	}

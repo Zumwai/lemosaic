@@ -32,13 +32,15 @@ func leEuclidCoordinates(target, src Pixel) uint32 {
 		(target.B-src.B)*(target.B-src.B))
 }
 
-/* calculates euclid distance between two 3-tuple. Ignores A for now. Slightly slower the le version
-func euclidCoordinates(target Pixel, src Pixel) float64 {
-	return math.Sqrt(math.Pow(float64(target.R-src.R), 2) + math.Pow(float64(target.G-src.G), 2) + math.Pow(float64(target.B-src.B), 2))
-}
-*/
+/*
+	calculates euclid distance between two 3-tuple. Ignores A for now. Slightly slower the le version
 
-/* iterates over map of available squares and returns nearest image  */
+	func euclidCoordinates(target Pixel, src Pixel) float64 {
+		return math.Sqrt(math.Pow(float64(target.R-src.R), 2) + math.Pow(float64(target.G-src.G), 2) + math.Pow(float64(target.B-src.B), 2))
+	}
+
+/* iterates over map of available squares and returns nearest image
+*/
 func calculateNearestPic(col Pixel, source map[string]ImgInfo) Image {
 	var min uint32 = 90000
 	var new Image
