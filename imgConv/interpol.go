@@ -48,7 +48,7 @@ func ApplyInterpol(src image.Image, dst Image, newRect image.Rectangle) error {
 	return nil
 }
 
-/* returns empy Image interface with drawable image inside, type depends on config */
+/* returns Image interface with drawable image inside, type depends on config */
 func GetEmptyPicture(sizeX, sizeY int) Image {
 	format := config.FormatLookup()
 	switch format {
@@ -56,11 +56,20 @@ func GetEmptyPicture(sizeX, sizeY int) Image {
 		return image.NewNRGBA(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
 	case "RGBA":
 		return image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
+	case "GRAY":
+		return image.NewGray(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
+	case "CMYK":
+		return image.NewCMYK(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
+	case "RGBA64":
+		return image.NewRGBA64(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
+	case "NRGBA64":
+		return image.NewNRGBA64(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
 	default:
 		return image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
 	}
 }
 
+/*checks if underlying image is drawable, if not - replaces it with one */
 func ConvertToDrawable(src image.Image) Image {
 	ret, ok := src.(draw.Image)
 	if !ok {

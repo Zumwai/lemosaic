@@ -15,12 +15,6 @@ import (
 	"os"
 )
 
-/*
-1-100, 75 is a default, used to determine how to encode jpeg.
-Currenty no outside control for that, limits are checked in image/jpeg
-*/
-const jpegQuality = 50
-
 /* decodes given image */
 func getDecodedFile(name string) (imgConv.Image, error) {
 	tmp, err := getUnformattedImage(name)
@@ -49,7 +43,7 @@ func EncodeToFile(path, name, suffix string, dst imgConv.Image) error {
 		}
 		return enc.Encode(newFile, dst)
 	case "jpeg":
-		return jpeg.Encode(newFile, dst, &jpeg.Options{Quality: jpegQuality})
+		return jpeg.Encode(newFile, dst, &jpeg.Options{Quality: config.JpegQualityLookup()})
 	case "gif":
 		return gif.Encode(newFile, dst, nil)
 	case "tiff":
@@ -65,9 +59,11 @@ func getUnformattedImage(name string) (image.Image, error) {
 	if err != nil {
 		return nil, err
 	}
-	size := stat.Size()
-	if size > 1e+7 {
-		return nil, fmt.Errorf("file is too large %d, max size is 10 mb", size)
+	if config.UnmaxLookup() {
+		size := stat.Size()
+		if size > 1e+7 {
+			return nil, fmt.Errorf("file is too large %d, max size is 10 mb, use -unmax flag to unset", size)
+		}
 	}
 	file, err := os.Open(name)
 	if err != nil {
@@ -105,6 +101,6 @@ func DecodeByType(file io.ReadSeeker) (dst image.Image, err error) {
 	case "image/webp":
 		return webp.Decode(file)
 	default:
-		return nil, fmt.Errorf("unrecognized- %s", format)
+		return nil, fmt.Errorf("unrecognized - %s", format)
 	}
 }

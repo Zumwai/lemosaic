@@ -5,14 +5,12 @@ import (
 	"encoding/base64"
 	"fmt"
 	"html/template"
-	//"image"
-	//"mime/multipart"
 	"image/png"
+	"mosaic/config"
 	"mosaic/imgConv"
 	"mosaic/localMosaic"
 	"net/http"
 	"time"
-	//"strconv"
 )
 
 /*running server, duh */
@@ -26,15 +24,20 @@ func StartServer() {
 		Addr:    "127.0.0.1:8080",
 		Handler: mux,
 	}
-	//TILESDB = tilesDB()
 	fmt.Println("Mosaic server started.")
 	server.ListenAndServe()
 }
 
 /* loads html page with load image button */
 func upload(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("upload.html")
-	t.Execute(w, nil)
+	t, err := template.ParseFiles("upload.html")
+	if err != nil {
+		return
+	}
+	err = t.Execute(w, nil)
+	if err != nil {
+		return
+	}
 }
 
 /*main html mosaic. Doesn't uses regular tools, so it's an ugly bastard*/
@@ -59,7 +62,7 @@ func mosaic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hashed, err := localMosaic.PopulateHashDir("./pics/")
+	hashed, err := localMosaic.PopulateHashDir(config.SrcImagesLookup())
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -74,7 +77,6 @@ func mosaic(w http.ResponseWriter, r *http.Request) {
 	}
 
 	mos := base64.StdEncoding.EncodeToString(buf.Bytes())
-	//fmt.Println(mos)
 	t1 := time.Now()
 	images := struct {
 		Mosaic   string
@@ -91,4 +93,3 @@ func mosaic(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 }
-

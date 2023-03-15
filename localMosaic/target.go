@@ -1,8 +1,10 @@
 package localMosaic
 
 import (
+	"fmt"
 	"mosaic/imgConv"
 	//"mosaic/logRuntime"
+	"mosaic/config"
 	"path"
 )
 
@@ -27,14 +29,15 @@ func ExecuteMosaic(name string) error {
 		return err
 	}
 
-	source, err := PopulateHashDir("./pics")
-	//logRuntime.PrintMemory("after populating hash\n")
+	source, err := PopulateHashDir(config.SrcImagesLookup())
 	if err != nil {
 		return err
 	}
-	dst := imgConv.PrepareMosaic(src, source)
-	//logRuntime.PrintMemory("after mosaic\n")
+	if len(source) < 1 {
+		return fmt.Errorf("no images in source dir")
+	}
 
+	dst := imgConv.PrepareMosaic(src, source)
 	err = EncodeToFile("./target/", path.Base(name), "_mosaic", dst)
 	if err != nil {
 		return err

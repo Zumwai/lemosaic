@@ -1,16 +1,9 @@
 package imgConv
 
 import (
-	"fmt"
-	//
 	"image"
-	// "mosaic/imgConv"
-	//"fmt"
 	"mosaic/config"
 )
-
-/* default opacity to store, currently just a dummy value*/
-const opacity = 255
 
 /*stores de-facto config for processing image */
 type Frame struct {
@@ -30,12 +23,6 @@ func ResizeInMemory(src image.Image, sizeX, sizeY int) (Image, error) {
 		return nil, err
 	}
 	return new, nil
-}
-
-/* calculates nearest integer(new <= num) divisible by div */
-func CorrectImageSize(num, div int) int {
-	var quotient = int(num / div)
-	return int(div * quotient)
 }
 
 /* corrects limit size in case of overflow */
@@ -70,10 +57,11 @@ func GetAveragePixel(pic Image, dx, dy, maxx, maxy int) (av Pixel) {
 			av.R += col.R
 			av.G += col.G
 			av.B += col.B
+			av.A += col.A
 		}
 	}
 	imgArea := uint32((maxx - dx) * (maxy - dy))
-	av.R, av.G, av.B, av.A = av.R/imgArea, av.G/imgArea, av.B/imgArea, opacity
+	av.R, av.G, av.B, av.A = av.R/imgArea, av.G/imgArea, av.B/imgArea, av.A/imgArea
 	return av
 }
 
@@ -85,6 +73,12 @@ func hcf(n1 int, n2 int) int {
 	}
 }
 
+/* calculates nearest integer(new <= num) divisible by div */
+func CorrectImageSize(num, div int) int {
+	var quotient = int(num / div)
+	return int(div * quotient)
+}
+
 /*
 corrects new image size/ number of go routine used and size of a step for them
 according to size of a picture and squares
@@ -92,12 +86,16 @@ according to size of a picture and squares
 func caclulateNewLimits(x, y int) Frame {
 	var fr Frame
 	tmpRout := config.RoutineLookup()
+	normal := config.NormalizeLookup()
 	fr.Size = config.ChunkLookup()
 
-	fr.X, fr.Y = CorrectImageSize(x, fr.Size), CorrectImageSize(y, fr.Size)
+	if !normal {
+		fr.X, fr.Y = CorrectImageSize(x, fr.Size), CorrectImageSize(y, fr.Size)
+	} else {
+		fr.X, fr.Y = x, y
+	}
 
 	fr.Routine = hcf(fr.X/fr.Size, tmpRout)
 	fr.Step = fr.X / fr.Routine
-	fmt.Printf("%+v\n", fr)
 	return fr
 }

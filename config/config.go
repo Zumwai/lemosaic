@@ -30,7 +30,11 @@ func InterpolLookup() string {
 func staticFormatLookupTable(format int) string {
 	var formats = []string{
 		"RGBA",
+		"RGBA64",
 		"NRGBA",
+		"NRGBA64",
+		"GRAY",
+		"CMYK",
 	}
 	if format < 0 || format > len(formats)-1 {
 		fmt.Printf("there is only %d types of interpolation available, choose %s, currently using default %s\n",
@@ -79,6 +83,14 @@ func NormalizeLookup() bool {
 	return flag.Lookup("normal").Value.(flag.Getter).Get().(bool)
 }
 
-func BounaryLookup() bool {
-	return flag.Lookup("bounds").Value.(flag.Getter).Get().(bool)
+func JpegQualityLookup() int {
+	return flag.Lookup("qual").Value.(flag.Getter).Get().(int)
+}
+
+func SrcImagesLookup() string {
+	return flag.Lookup("source").Value.(flag.Getter).Get().(string)
+}
+
+func UnmaxLookup() bool {
+	return flag.Lookup("unmax").Value.(flag.Getter).Get().(bool)
 }

@@ -2,9 +2,7 @@ package localMosaic
 
 import (
 	"fmt"
-	//"image"
 	"golang.org/x/image/draw"
-
 	"mosaic/config"
 	"mosaic/imgConv"
 	"os"
@@ -30,9 +28,8 @@ func PopulateHashDir(dirName string) (map[string]imgConv.ImgInfo, error) {
 
 	dirReader, err := os.ReadDir(dirName)
 	if err != nil {
-		return average.hash, nil
+		return nil, err
 	}
-
 	average.hash = make(map[string]imgConv.ImgInfo, len(dirReader))
 	wg.Add(len(dirReader))
 	for _, f := range dirReader {

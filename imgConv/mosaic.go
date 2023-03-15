@@ -1,11 +1,8 @@
 package imgConv
 
 import (
-	//"fmt"
-	"image"
-	//"image/draw"
 	"golang.org/x/image/draw"
-	//"math"
+	"image"
 	"sync"
 )
 
@@ -66,7 +63,6 @@ func mosaicDatImg(src Image, dst Image, dx, limitX, limitY, size int, source map
 			bounds := image.Rectangle{image.Point{x, y}, image.Point{x + size, y + size}}
 			av := calculateNearestPic(col, source)
 			draw.Draw(dst, bounds, av, image.Point{0, 0}, draw.Over)
-			//draw.DrawMask(dst, bounds, av, image.Point{0, 0}, nil, image.Point{0, 0}, draw.Over)
 		}
 	}
 }
