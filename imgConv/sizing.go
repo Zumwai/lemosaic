@@ -48,7 +48,7 @@ func rgbaToPixel(r uint32, g uint32, b uint32, a uint32) Pixel {
 	return Pixel{r / 257, g / 257, b / 257, a / 257}
 }
 
-/* calculates average color of a given chunk. Needs testing for разворачивание цикла*/
+/* calculates average color of a given chunk. */
 func GetAveragePixel(pic Image, dx, dy, maxx, maxy int) (av Pixel) {
 	for x := dx; x < maxx; x++ {
 		for y := dy; y < maxy; y++ {
@@ -57,6 +57,20 @@ func GetAveragePixel(pic Image, dx, dy, maxx, maxy int) (av Pixel) {
 			av.R += col.R
 			av.G += col.G
 			av.B += col.B
+			/*
+				col = rgbaToPixel(pic.At(x, y+1).RGBA())
+				av.R += col.R
+				av.G += col.G
+				av.B += col.B
+				col = rgbaToPixel(pic.At(x, y+2).RGBA())
+				av.R += col.R
+				av.G += col.G
+				av.B += col.B
+				col = rgbaToPixel(pic.At(x, y+3).RGBA())
+				av.R += col.R
+				av.G += col.G
+				av.B += col.B
+			*/
 			//av.A += col.A
 		}
 	}
