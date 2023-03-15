@@ -80,11 +80,7 @@ func mosaic(w http.ResponseWriter, r *http.Request) {
 		Mosaic   string
 		Duration string
 	}{mos, fmt.Sprintf("%v ", t1.Sub(t0))}
-	err = localMosaic.EncodeToFile("./target/", "tested server", "_squared", final)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+
 	t, err := template.ParseFiles("result.html")
 	if err != nil {
 		fmt.Println(err)
@@ -95,3 +91,4 @@ func mosaic(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 }
+

@@ -1,7 +1,7 @@
 package imgConv
 
 import (
-	//	"fmt"
+	"fmt"
 	//
 	"image"
 	// "mosaic/imgConv"
@@ -98,6 +98,6 @@ func caclulateNewLimits(x, y int) Frame {
 
 	fr.Routine = hcf(fr.X/fr.Size, tmpRout)
 	fr.Step = fr.X / fr.Routine
-	//fmt.Printf("%+v\n", fr)
+	fmt.Printf("%+v\n", fr)
 	return fr
 }
