@@ -11,7 +11,7 @@ Default output is jpeg. Default jpeg quality is 50 - settable with [-qual] flag 
 
 Overall output quality and internal encoding settable with [-interpol] ([0-3] From worst to best: NearestNeighbor; ApproxBiLinear; CatmullRom; BiLinear;) and with [-format] flag ([0-5] : RGBA; RGBA64; NRGBA; NRGBA64; GRAY; CMYK;). Defaults are 0 in both cases.
 
-To ensure an actual *squaring* of an image with flag [-normal] size of output image will be adjusted to actual *(actual <= original)*. Without this flag on the edges will be cutted squares.
+To ensure an actual *squaring* of an image with flag [-normal] size of output image will be adjusted to actual *(actual <= original)*. Without this flag on the edges will be cutted squares, but image output will be same size as original.
 
 Semi-controllable number of goroutines in use with flag [-routine]. It will be internally adjusted to an actual number *(actual <= requested)* to speed up the process and to ensure that routines do not overlap on target pixel-slice with size of a square in mind. Default is 500, although most of the time no more than 40 will be actually launched. The idea behind that is based on simple image resolution progression of (n\*2) pixels and the need to flatten this to (2\*n) decoder/encoder bottleneck. #todo - number of routines is too low, calculations are wrong
 
