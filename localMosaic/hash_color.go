@@ -11,18 +11,18 @@ import (
 
 type AvColors struct {
 	mu   sync.Mutex
-	hash map[string]imgConv.ImgInfo
+	hash []imgConv.ImgInfo
 }
 
-/* method for concurrently add entity to map */
-func (m *AvColors) add(name string, hash imgConv.ImgInfo) {
+/* method for concurrently add entity to slice */
+func (m *AvColors) add(hash imgConv.ImgInfo) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	m.hash[name] = hash
+	m.hash = append(m.hash, hash)
 }
 
 /* opens dir and puts all its files into map, containing name and average colors */
-func PopulateHashDir(dirName string) (map[string]imgConv.ImgInfo, error) {
+func PopulateHashDir(dirName string) ([]imgConv.ImgInfo, error) {
 	var wg sync.WaitGroup
 	var average AvColors
 
@@ -30,7 +30,8 @@ func PopulateHashDir(dirName string) (map[string]imgConv.ImgInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	average.hash = make(map[string]imgConv.ImgInfo, len(dirReader))
+	average.hash = make([]imgConv.ImgInfo, 0, len(dirReader))
+
 	wg.Add(len(dirReader))
 	for _, f := range dirReader {
 		go func(name string) {
@@ -39,7 +40,7 @@ func PopulateHashDir(dirName string) (map[string]imgConv.ImgInfo, error) {
 			if err != nil {
 				fmt.Println(name, ":\t", err)
 			} else {
-				average.add(name, tmp)
+				average.add(tmp)
 			}
 		}(f.Name())
 	}

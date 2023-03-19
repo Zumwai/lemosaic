@@ -52,16 +52,17 @@ func expandedSemiEuclid(target, src Pixel) uint32 {
 	}
 */
 
-func calculateNearestPic(col Pixel, source map[string]ImgInfo) Image {
+func calculateNearestPic(col Pixel, source []ImgInfo) Image {
 	var min uint32 = 90000
 	var ret Image
 
-	for _, f := range source {
-		tmp := semiEuclidCoordinates(col, f.Av)
+	for i, _ := range source {
+		tmp := semiEuclidCoordinates(col, source[i].Av)
 		if min > tmp {
-			min, ret = tmp, f.Square
+			min, ret = tmp, source[i].Square
 		}
 	}
+
 	return ret
 }
 
@@ -69,7 +70,7 @@ func calculateNearestPic(col Pixel, source map[string]ImgInfo) Image {
 steps over x by the amount of (size of a square)*(number of goroutine) and  iterates from top to bottom of y,
 converts average chunk size of original image to av color and substitutes it with nearest available image-square
 */
-func mosaicDatImg(src Image, dst Image, dx, limitX, limitY, size int, source map[string]ImgInfo) {
+func mosaicDatImg(src Image, dst Image, dx, limitX, limitY, size int, source []ImgInfo) {
 	for x := dx; x < dx+limitX; x += size {
 		for y := 0; y < limitY; y += size {
 			col := CalcAverageChunk(x, y, size, src)
@@ -81,7 +82,7 @@ func mosaicDatImg(src Image, dst Image, dx, limitX, limitY, size int, source map
 }
 
 /* prepares mosaic image in memory */
-func PrepareMosaic(src Image, source map[string]ImgInfo) (ret Image) {
+func PrepareMosaic(src Image, source []ImgInfo) (ret Image) {
 	var wg sync.WaitGroup
 	fr := caclulateNewLimits(src.Bounds().Max.X, src.Bounds().Max.Y)
 	fmt.Printf("%+v\n", fr)

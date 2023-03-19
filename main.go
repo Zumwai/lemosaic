@@ -16,7 +16,7 @@ func main() {
 	flag.Int("encoder", 0, "choose final image format [0-3] - jpeg, png, tiff, gif")
 	flag.Int("chunk", 20, "size of a square in image")
 	flag.Int("routine", 1000, "number of gourutine in use, will  be modified AKA tolower depending on the image size")
-	flag.Bool("normal", true, "pass this to round down img size so that x/chunk % 0 and y/chynk % 0. pass -normal=false to avoid")
+	flag.Bool("normal", false, "pass this to round down img size so that x/chunk % 0 and y/chynk % 0. pass -normal=true to avoid")
 	flag.Int("qual", 50, "quality for jpeg output [1-100], will be adjusted to correct value")
 	flag.String("source", "./pics", "dir to use for source image for mosaic")
 	flag.Bool("unmax", false, "declares that arbitrary limit of 10mb is no longer needed")
