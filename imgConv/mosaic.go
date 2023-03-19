@@ -6,28 +6,27 @@ import (
 	"sync"
 )
 
-func wikiSqrt(n uint32) uint32 {
-	var c uint32 = 0
-	var d uint32 = 1 << 30
-	var x uint32 = n
-	for d > n {
-		d >>= 2
+func SqrtHDU32(x uint32) uint32 {
+	var t, b, r uint
+	t = uint(x)
+	p := uint(1 << 30)
+	for p > t {
+		p >>= 2
 	}
-	for d != 0 {
-		if x >= c+d {
-			x -= c + d
-			c = (c >> 1) + d
-		} else {
-			c >>= 1
+	for ; p != 0; p >>= 2 {
+		b = r | p
+		r >>= 1
+		if t >= b {
+			t -= b
+			r |= p
 		}
-		d >>= 2
 	}
-	return c
+	return uint32(r)
 }
 
 /* calculates euclid distance bewtween two 3-tuple of uint32 type */
 func leEuclidCoordinates(target, src Pixel) uint32 {
-	return wikiSqrt((target.R-src.R)*(target.R-src.R) +
+	return SqrtHDU32((target.R-src.R)*(target.R-src.R) +
 		(target.G-src.G)*(target.G-src.G) +
 		(target.B-src.B)*(target.B-src.B))
 }
