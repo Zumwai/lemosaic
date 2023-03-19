@@ -49,7 +49,11 @@ func FormatLookup() string {
 }
 
 func ChunkLookup() int {
-	return flag.Lookup("chunk").Value.(flag.Getter).Get().(int)
+	size := flag.Lookup("chunk").Value.(flag.Getter).Get().(int)
+	if size <= 0 {
+		return 1
+	}
+	return size
 }
 
 func staticEncoderLookup(encoder int) string {

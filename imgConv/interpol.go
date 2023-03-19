@@ -2,6 +2,7 @@ package imgConv
 
 import (
 	"errors"
+	//"fmt"
 	"golang.org/x/image/draw"
 	"image"
 	"image/color"
@@ -79,4 +80,37 @@ func ConvertToDrawable(src image.Image) Image {
 		return tmpPtr
 	}
 	return ret
+}
+
+/* corrects limit size in case of overflow */
+func CalcAverageChunk(x, y, size int, img Image) Pixel {
+	var limitX int
+	var limitY int
+
+	if x+size > img.Bounds().Max.X {
+		limitX = img.Bounds().Max.X
+	} else {
+		limitX = x + size
+	}
+	if y+size > img.Bounds().Max.Y {
+		limitY = img.Bounds().Max.Y
+	} else {
+		limitY = y + size
+	}
+	return GetAveragePixel(img, x, y, limitX, limitY)
+}
+
+/* calculates average color of a given chunk.*/
+func GetAveragePixel(pic Image, dx, dy, maxx, maxy int) (av Pixel) {
+	for x := dx; x < maxx; x++ {
+		for y := dy; y < maxy; y++ {
+			r, g, b, _ := pic.At(x, y).RGBA()
+			av.R += r / 255
+			av.G += g / 255
+			av.B += b / 255
+		}
+	}
+	imgArea := uint32((maxx - dx) * (maxy - dy))
+	av.R, av.G, av.B, av.A = av.R/imgArea, av.G/imgArea, av.B/imgArea, 255
+	return av
 }

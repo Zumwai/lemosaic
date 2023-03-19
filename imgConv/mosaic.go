@@ -1,9 +1,11 @@
 package imgConv
 
 import (
-	"golang.org/x/image/draw"
+	"fmt"
 	"image"
 	"sync"
+
+	"golang.org/x/image/draw"
 )
 
 func SqrtHDU32(x uint32) uint32 {
@@ -25,32 +27,42 @@ func SqrtHDU32(x uint32) uint32 {
 }
 
 /* calculates euclid distance bewtween two 3-tuple of uint32 type */
-func leEuclidCoordinates(target, src Pixel) uint32 {
+func calcEuclidCoordinates(target, src Pixel) uint32 {
 	return SqrtHDU32((target.R-src.R)*(target.R-src.R) +
 		(target.G-src.G)*(target.G-src.G) +
 		(target.B-src.B)*(target.B-src.B))
 }
 
+func semiEuclidCoordinates(target, src Pixel) uint32 {
+	return (target.R-src.R)*(target.R-src.R) +
+		(target.G-src.G)*(target.G-src.G) +
+		(target.B-src.B)*(target.B-src.B)
+}
+
+func expandedSemiEuclid(target, src Pixel) uint32 {
+	//x1 := (target.R*target.R + target.G*target.G + target.B*target.B + src.G*src.G + src.B*src.B + src.R*src.R - 2*(target.R*src.R + target.B*src.B + target.G*src.G)
+	return (target.R+target.G+target.B)*(target.R+target.G+target.B) +
+		(src.R+src.G+src.B)*(src.R+src.G+src.B) -
+		2*(target.R+target.G+target.B)*(src.R+src.G+src.B)
+}
+
 /*
-	calculates euclid distance between two 3-tuple. Ignores A for now. Slightly slower the le version
-
-	func euclidCoordinates(target Pixel, src Pixel) float64 {
-		return math.Sqrt(math.Pow(float64(target.R-src.R), 2) + math.Pow(float64(target.G-src.G), 2) + math.Pow(float64(target.B-src.B), 2))
+	func nonEuclidCoordinates(target, src Pixel) uint32 {
+		return (target.R - src.R) + (target.G - src.G) + (target.B - src.B)
 	}
-
-/* iterates over map of available squares and returns nearest image
 */
+
 func calculateNearestPic(col Pixel, source map[string]ImgInfo) Image {
 	var min uint32 = 90000
-	var new Image
+	var ret Image
 
 	for _, f := range source {
-		tmp := leEuclidCoordinates(col, f.Av)
+		tmp := semiEuclidCoordinates(col, f.Av)
 		if min > tmp {
-			min, new = tmp, f.Square
+			min, ret = tmp, f.Square
 		}
 	}
-	return new
+	return ret
 }
 
 /*
@@ -72,6 +84,7 @@ func mosaicDatImg(src Image, dst Image, dx, limitX, limitY, size int, source map
 func PrepareMosaic(src Image, source map[string]ImgInfo) (ret Image) {
 	var wg sync.WaitGroup
 	fr := caclulateNewLimits(src.Bounds().Max.X, src.Bounds().Max.Y)
+	fmt.Printf("%+v\n", fr)
 	wg.Add(fr.Routine)
 
 	dst := GetEmptyPicture(fr.X, fr.Y)
