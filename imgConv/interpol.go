@@ -2,7 +2,6 @@ package imgConv
 
 import (
 	"errors"
-	//"fmt"
 	"golang.org/x/image/draw"
 	"image"
 	"image/color"
@@ -93,6 +92,7 @@ func CalcAverageChunk(x, y, size int, img Image) Pixel {
 		limitX = x + size
 	}
 	if y+size > img.Bounds().Max.Y {
+
 		limitY = img.Bounds().Max.Y
 	} else {
 		limitY = y + size

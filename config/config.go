@@ -53,6 +53,9 @@ func ChunkLookup() int {
 	if size <= 0 {
 		return 1
 	}
+	if size > 1000 {
+		return 1000
+	}
 	return size
 }
 
@@ -97,4 +100,8 @@ func SrcImagesLookup() string {
 
 func UnmaxLookup() bool {
 	return flag.Lookup("unmax").Value.(flag.Getter).Get().(bool)
+}
+
+func SetChunkSize(s string) {
+	flag.Lookup("chunk").Value.Set(s)
 }

@@ -48,17 +48,16 @@ according to size of a picture and squares
 */
 func caclulateNewLimits(x, y int) Frame {
 	var fr Frame
-	tmpRout := config.RoutineLookup()
+	//tmpRout := config.RoutineLookup()
 	normal := config.NormalizeLookup()
 	fr.Size = config.ChunkLookup()
-
 	if !normal {
 		fr.X, fr.Y = CorrectImageSize(x, fr.Size), CorrectImageSize(y, fr.Size)
 	} else {
 		fr.X, fr.Y = x, y
-	}
 
-	fr.Routine = hcf(fr.X/fr.Size, tmpRout)
-	fr.Step = fr.X / fr.Routine
+	}
+	fr.Step = fr.Size
+	fr.Routine = fr.X / fr.Step
 	return fr
 }

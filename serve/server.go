@@ -45,6 +45,7 @@ func mosaic(w http.ResponseWriter, r *http.Request) {
 	t0 := time.Now()
 	r.ParseMultipartForm(1e+7)
 	file, _, err := r.FormFile("image")
+	config.SetChunkSize(r.FormValue("tile-size"))
 	if err != nil {
 		fmt.Println(err)
 		return

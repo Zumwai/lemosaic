@@ -1,7 +1,6 @@
 package imgConv
 
 import (
-	"fmt"
 	"image"
 	"sync"
 
@@ -85,7 +84,6 @@ func mosaicDatImg(src Image, dst Image, dx, limitX, limitY, size int, source []I
 func PrepareMosaic(src Image, source []ImgInfo) (ret Image) {
 	var wg sync.WaitGroup
 	fr := caclulateNewLimits(src.Bounds().Max.X, src.Bounds().Max.Y)
-	fmt.Printf("%+v\n", fr)
 	wg.Add(fr.Routine)
 
 	dst := GetEmptyPicture(fr.X, fr.Y)
