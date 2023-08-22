@@ -17,6 +17,7 @@ type Frame struct {
 /* resizes image in memory and returns it in drawable image format*/
 func ResizeInMemory(src image.Image, sizeX, sizeY int) (Image, error) {
 	//new := image.NewRGBA(image.Rect(0, 0, sizeX, sizeY))
+
 	new := GetEmptyPicture(sizeX, sizeY)
 	err := ApplyInterpol(src, new, image.Rectangle{image.Point{0, 0}, image.Point{sizeX, sizeY}})
 	if err != nil {

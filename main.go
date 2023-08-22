@@ -20,6 +20,7 @@ func main() {
 	flag.Int("qual", 50, "quality for jpeg output [1-100], will be adjusted to correct value")
 	flag.String("source", "./pics", "dir to use for source image for mosaic")
 	flag.Bool("unmax", false, "declares that arbitrary limit of 10mb is no longer needed")
+	flag.Int("size", 0, "decided on final x size of the image")
 	debug := flag.Bool("debug", false, "use this to enable memory tracker and generating pprof")
 	var pourTarget = flag.String("pour", "", "Pour this file into squares")
 	var calcAverage = flag.String("average", "", "what are average colors of a picture")

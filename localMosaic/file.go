@@ -21,8 +21,11 @@ func getDecodedFile(name string) (imgConv.Image, error) {
 	if err != nil {
 		return nil, err
 	}
-	ret := imgConv.ConvertToDrawable(tmp)
-	return ret, nil
+	x := config.SizeLookup()
+	if x == 0 {
+		return imgConv.ConvertToDrawable(tmp), nil
+	}
+	return imgConv.ConvertWithResizing(tmp, x), nil
 }
 
 /* encodes to local file, type of resulting image depends on config */

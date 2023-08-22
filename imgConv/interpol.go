@@ -2,6 +2,7 @@ package imgConv
 
 import (
 	"errors"
+	"fmt"
 	"golang.org/x/image/draw"
 	"image"
 	"image/color"
@@ -79,6 +80,22 @@ func ConvertToDrawable(src image.Image) Image {
 		return tmpPtr
 	}
 	return ret
+}
+
+func ConvertWithResizing(src image.Image, x int) Image {
+	tmpPtr, err := ResizeInMemory(src, x, calculateRatio(src.Bounds().Max.X, src.Bounds().Max.Y, x))
+	if err != nil {
+		return nil
+	}
+	return tmpPtr
+}
+
+func calculateRatio(oldx, oldy, x int) int {
+	fmt.Println(oldx, oldy, x, (oldy/oldx)*x)
+	ox := float64(oldx)
+	oy := float64(oldy)
+	nx := float64(x)
+	return int((oy / ox) * nx)
 }
 
 /* corrects limit size in case of overflow */

@@ -105,3 +105,7 @@ func UnmaxLookup() bool {
 func SetChunkSize(s string) {
 	flag.Lookup("chunk").Value.Set(s)
 }
+
+func SizeLookup() int {
+	return flag.Lookup("size").Value.(flag.Getter).Get().(int)
+}
