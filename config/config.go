@@ -37,7 +37,7 @@ func staticFormatLookupTable(format int) string {
 		"CMYK",
 	}
 	if format < 0 || format > len(formats)-1 {
-		fmt.Printf("there is only %d types of interpolation available, choose %s, currently using default %s\n",
+		fmt.Printf("there is only %d types of internal encoding available, choose %s, currently using default %s\n",
 			len(formats), formats, formats[0])
 		return formats[0]
 	}
@@ -65,9 +65,10 @@ func staticEncoderLookup(encoder int) string {
 		"png",
 		"tiff",
 		"gif",
+		"webp",
 	}
 	if encoder < 0 || encoder > len(encoders)-1 {
-		fmt.Printf("there is only %d types of interpolation available, choose %s, currently using default %s\n",
+		fmt.Printf("there is only %d types of file encoding available, choose %s, currently using default %s\n",
 			len(encoders), encoders, encoders[0])
 		return encoders[0]
 	}

@@ -2,8 +2,13 @@ package localMosaic
 
 import (
 	"fmt"
+
+	"github.com/kolesa-team/go-webp/decoder"
+	"github.com/kolesa-team/go-webp/encoder"
+	"github.com/kolesa-team/go-webp/webp"
 	"golang.org/x/image/tiff"
-	"golang.org/x/image/webp"
+
+	// "golang.org/x/image/webp"
 	"image"
 	"image/gif"
 	"image/jpeg"
@@ -51,6 +56,13 @@ func EncodeToFile(path, name, suffix string, dst imgConv.Image) error {
 		return gif.Encode(newFile, dst, nil)
 	case "tiff":
 		return tiff.Encode(newFile, dst, &tiff.Options{Compression: tiff.Deflate, Predictor: false})
+	case "webp":
+		options, err := encoder.NewLossyEncoderOptions(encoder.PresetDefault, 80)
+		options.Lossless = true
+		if err != nil {
+			fmt.Println(err)
+		}
+		return webp.Encode(newFile, dst, options)
 	default:
 		return fmt.Errorf("unrecognized format - %s", format)
 	}
@@ -102,7 +114,7 @@ func DecodeByType(file io.ReadSeeker) (dst image.Image, err error) {
 	case "image/tiff":
 		return tiff.Decode(file)
 	case "image/webp":
-		return webp.Decode(file)
+		return webp.Decode(file, &decoder.Options{})
 	default:
 		return nil, fmt.Errorf("unrecognized - %s", format)
 	}

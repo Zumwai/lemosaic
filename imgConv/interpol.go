@@ -119,13 +119,14 @@ func CalcAverageChunk(x, y, size int, img Image) Pixel {
 func GetAveragePixel(pic Image, dx, dy, maxx, maxy int) (av Pixel) {
 	for x := dx; x < maxx; x++ {
 		for y := dy; y < maxy; y++ {
-			r, g, b, _ := pic.At(x, y).RGBA()
-			av.R += r / 255
-			av.G += g / 255
-			av.B += b / 255
+			r, g, b, a := pic.At(x, y).RGBA()
+			av.R += r / 257
+			av.G += g / 257
+			av.B += b / 257
+			av.A += a / 257
 		}
 	}
 	imgArea := uint32((maxx - dx) * (maxy - dy))
-	av.R, av.G, av.B, av.A = av.R/imgArea, av.G/imgArea, av.B/imgArea, 255
+	av.R, av.G, av.B, av.A = av.R/imgArea, av.G/imgArea, av.B/imgArea, av.A/imgArea
 	return av
 }
